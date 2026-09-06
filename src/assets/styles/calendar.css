@@ -1,0 +1,107 @@
+.fc-custom-tooltip {
+    position: fixed;
+
+    max-width: 250px;
+    padding: 0.75rem 1rem;
+
+    background: whitesmoke;
+    color: dimgray;
+
+    border: 1px solid darkgray;
+    border-radius: 4px;
+
+    font-size: 12px;
+    line-height: 1.4;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+
+    transform: translateX(-50%);
+
+    opacity: 0;
+    pointer-events: none;
+
+    z-index: 999999;
+
+    transition: opacity 150ms ease;
+}
+
+.fc-7s div[style*="overflow"] {
+    overflow-y: auto !important;
+    scrollbar-width: none;
+}
+
+:root {
+    --fc-vacunacion: #2563eb;
+    --blue-muted: #e8f0fe;
+
+    --fc-remate: #b45309;
+    --amber-muted: #fef3e7;
+
+    --fc-reunion: #7c3aed;
+    --violet-muted: #f1ebff;
+
+    --fc-veterinario: #0891b2;
+    --cyan-muted: #e6f7fa;
+
+    --fc-pesaje: #475569;
+    --slate-muted: #eef2f6;
+
+    --fc-marcado: #c2410c;
+    --orange-muted: #fff0e8;
+
+    --fc-desparasitacion: #65a30d;
+    --lime-muted: #f0f7e6;
+
+    --fc-transporte: #0369a1;
+    --sky-muted: #e7f3fa;
+
+    --fc-otro: #64748b;
+    --gray-muted: #f1f3f5;
+}
+
+
+/* Estilos específicos de FullCalendar */
+.fc {
+  /*--fc-border-color: theme(--color-border);*/
+  --fc-today-bg-color: #f0f9ff;
+  --fc-event-border-color: transparent;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.fc .fc-button {
+  background-color: white;
+  /*border: 1px solid theme(--color-border);*/
+  color: #374151;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.fc .fc-button-active {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+.fc .fc-col-header-cell {
+  padding: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.fc-event {
+  border-radius: 0.375rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.fc-event:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

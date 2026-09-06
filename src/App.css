@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme {
+    /* Animación para el RippleSpinner */
+    --animate-ripple: ripple 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+    /* Animaciones para el WaveSpinner */
+    --animate-wave-left: wave-left 3s linear infinite;
+    --animate-wave-right: wave-right 2.5s linear infinite;
+    --animate-liquid-fill-bg: fill-bg 6s cubic-bezier(0, 0, 0.2, 1) forwards;
+    --animate-liquid-fill-fg: fill-fg 6s cubic-bezier(0, 0, 0.2, 1) forwards;
+
+    /* Animaciones para las letras del TextMorph del WaveSpinner */
+    --animate-char-in: char-in 0.3s cubic-bezier(0, 0, 0.2, 1) forwards;
+
+    @keyframes ripple {
+        0% {
+            transform: scale(0.1);
+            opacity: 0;
+        }
+        50% {
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 0;
+        }
+    }
+
+    @keyframes wave-left {
+        from {
+            transform: translateX(-600px);
+        }
+        to {
+            transform: translateX(0px);
+        }
+    }
+
+    @keyframes wave-right {
+        from {
+            transform: translateX(0px);
+        }
+        to {
+            transform: translateX(-600px);
+        }
+    }
+
+    @keyframes fill-bg {
+        from {
+            transform: translateY(330.6px);
+        }
+        to {
+            transform: translateY(170.1px);
+        }
+    }
+
+    @keyframes fill-fg {
+        from {
+            transform: translateY(330.6px);
+        }
+        to {
+            transform: translateY(180.1px);
+        }
+    }
+
+    @keyframes char-in {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+            filter: blur(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0px);
+        }
+    }
+}
