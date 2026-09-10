@@ -20,6 +20,7 @@ export default defineConfig({
             "@assets": resolve(__dirname, "./src/assets"),
             "@shared": resolve(__dirname, "./src/features/shared"),
             "@auth": resolve(__dirname, "./src/features/auth"),
+            "@analytics": resolve(__dirname, "./src/features/analytics"),
             "@cattle": resolve(__dirname, "./src/features/cattle"),
             "@finance": resolve(__dirname, "./src/features/finance"),
             "@market": resolve(__dirname, "./src/features/market"),

@@ -28,6 +28,7 @@
         "@utils/*": ["./src/lib/utils/*"],
         "@assets/*": ["./src/assets/*"],
         "@auth/*": ["./src/features/auth/*"],
+        "@analytics/*": ["./src/features/analytics/*"],
         "@cattle/*": ["./src/features/cattle/*"],
         "@finance/*": ["./src/features/finance/*"],
         "@market/*": ["./src/features/market/*"],

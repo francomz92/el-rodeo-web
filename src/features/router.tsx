@@ -4,6 +4,7 @@ import { authRouter } from "@auth/routers";
 import { dashboardRouter } from "@shared/routers";
 import { cattleRouter } from "@cattle/routers"
 import { financeRouter } from "@finance/routers"
+import { analyticsRouter } from "@analytics/routers"
 
 
 export default createBrowserRouter([
@@ -11,4 +12,5 @@ export default createBrowserRouter([
     ...dashboardRouter,
     ...cattleRouter,
     ...financeRouter,
+    ...analyticsRouter,
 ]);
