@@ -50,10 +50,10 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
             {/* Fila principal de filtros */}
             <div className="flex flex-wrap items-end gap-4">
                 {/* 1. TIPO */}
-                <div className="flex flex-col gap-1.5 min-w-40 p-4 border border-border rounded-xl">
+                <div className="flex flex-col gap-1.5 min-w-40 p-4 border border-border rounded-xl bg-card">
                     <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tipo</label>
                     <Select value={capitalize(filters.type) || "Todos"} onValueChange={(v) => handleFilterChange("type", v)}>
-                        <SelectTrigger className="w-full rounded-lg!">
+                        <SelectTrigger className="w-full rounded-lg! hover:bg-input hover:cursor-pointer">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent className="rounded-lg! max-h-50!">
@@ -68,13 +68,13 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                 </div>
 
                 {/* 2. PARTICIPANTES (Responsable) - COMBOBOX CON BÚSQUEDA */}
-                <div className="flex flex-col gap-1.5 min-w-48 p-4 border border-border rounded-xl">
+                <div className="flex flex-col gap-1.5 min-w-48 p-4 border border-border rounded-xl bg-card">
                     <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Participantes</label>
                     <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger
                             role="combobox"
                             aria-expanded={open}
-                            className="flex max-w-50 items-center justify-between gap-1.5 border border-transparent bg-input/50 px-3 py-2 text-sm whitespace-nowrap outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 rounded-lg!"
+                            className="flex max-w-50 items-center justify-between gap-1.5 border border-transparent bg-input/50 px-3 py-2 text-sm whitespace-nowrap outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 rounded-lg!  hover:bg-input hover:cursor-pointer"
                         >
                             <span className="truncate">{selectedParticipants?.map((p) => p.name).join(", ") || "Todos"}</span>
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -116,13 +116,13 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                 </div>
 
                 {/* 3. ESTADO */}
-                <div className="flex flex-col gap-1.5 min-w-40 p-4 border border-border rounded-xl">
+                <div className="flex flex-col gap-1.5 min-w-40 p-4 border border-border rounded-xl bg-card">
                     <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Estado</label>
                     <Select
                         value={filters.pending === null ? "Todos" : filters.pending ? "Pendiente" : "Completado"}
                         onValueChange={(v) => handleFilterChange("pending", v)}
                     >
-                        <SelectTrigger className="w-full rounded-lg!">
+                        <SelectTrigger className="w-full rounded-lg! hover:bg-input hover:cursor-pointer">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent className="rounded-lg! max-h-50!">

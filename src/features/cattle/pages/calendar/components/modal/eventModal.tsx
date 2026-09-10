@@ -6,6 +6,8 @@ import EventDetailCard from "./eventDetailCard";
 import EventForm from "./eventForm";
 import type { ExtendedEventProps } from "../../types";
 import type { UserMeResponseSchema } from "@auth/schemas/output/user";
+import { useProfile } from "@auth/hooks/profile";
+import { AUTH_ROLES } from "@auth/constants";
 
 interface EventModalContentProps {
     events?: ExtendedEventProps[];
@@ -16,8 +18,10 @@ interface EventModalContentProps {
 }
 
 const EventModalContent: React.FC<EventModalContentProps> = ({ events, date, changeDate, onClose, usersList }) => {
+    const { user } = useProfile();
     const selectedEvent = events?.find((e) => e.selected);
-    if (Boolean(events?.length) && !selectedEvent?.id) return null
+    if (Boolean(events?.length) && !selectedEvent?.id) return null;
+    const canWrite = user?.role !== AUTH_ROLES.VIEWER;
 
     return (
         <div className="h-full lg:h-[76vh] lg:self-end lg:min-w-75 border rounded-xl p-2 px-8 lg:px-1 pb-8 pt-8 lg:pt-4 bg-(--fc-forma-background)">
@@ -28,7 +32,9 @@ const EventModalContent: React.FC<EventModalContentProps> = ({ events, date, cha
             </div>
             <Card className="lg:flex lg:justify-around w-full h-full shadow-none ring-0 overflow-y-auto scrollbar-thin bg-inherit">
                 {/*INFO Cuando no hay eventos en la fecha seleccionada, se muestra el formulario de creación */}
-                {!selectedEvent?.id && <EventForm date={date!} changeDate={changeDate} onClose={onClose} usersList={usersList} />}
+                {canWrite && !selectedEvent?.id && (
+                    <EventForm date={date!} changeDate={changeDate} onClose={onClose} usersList={usersList} />
+                )}
                 {/*INFO Cuando hay eventos pero no se selecciona uno en particular, se muestra la lista de eventos */}
                 {/*{Boolean(events?.length) && !selectedEvent?.id && <div className="w-full text-center">Lista de eventos</div>}*/}
                 {/*INFO: Cuando se selecciona un evento, se muestra el detalle del evento */}

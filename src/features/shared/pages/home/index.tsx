@@ -1,17 +1,7 @@
-import { useNavigate } from 'react-router-dom'
+import { Navigate } from "react-router-dom";
 
 const Home: React.FC = () => {
-    const navigate = useNavigate()
+    return <Navigate to="/analytics" />;
+};
 
-    const goTo = () => {
-        navigate("/users")
-    }
-    return (
-        <div>
-            <h1>Home</h1>
-            <button onClick={goTo}>Ir</button>
-        </div>
-    )
-}
-
-export default Home
+export default Home;

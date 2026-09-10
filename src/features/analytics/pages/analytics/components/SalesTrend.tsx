@@ -3,6 +3,7 @@ import { Bar, Line } from "react-chartjs-2";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
 import { WaveSpinner } from "@components/index";
 import { resolveChartColor } from "@analytics/utils/charts";
+import { formatCurrencyARS, formatGeneratedAt } from "@analytics/utils/format";
 
 
 export type SalesChartType = "line" | "bar";
@@ -30,9 +31,7 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
     generatedAt,
     granularityLabel,
 }) => {
-    const stalenessLabel = generatedAt
-        ? `Actualizado: ${generatedAt}`
-        : "Fecha de actualización no disponible";
+    const stalenessLabel = formatGeneratedAt(generatedAt);
 
     if (isError) {
         return (
@@ -89,8 +88,15 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: { position: "bottom" as const },
+            tooltip: {
+                callbacks: {
+                    label: (item: { dataIndex: number }): string =>
+                        ` Ingresos: ${formatCurrencyARS(revenues[item.dataIndex] ?? 0)}`,
+                },
+            },
         },
     };
 
@@ -103,9 +109,9 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="relative">
+                <div className="relative h-72">
                     {isPending && <WaveSpinner />}
-                    <div role="img" aria-label={ariaSummary}>
+                    <div role="img" aria-label={ariaSummary} className="w-full h-full">
                         {chartType === "line" ? (
                             <Line data={chartData} options={chartOptions} />
                         ) : (
@@ -125,7 +131,7 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
                             {points.map((point) => (
                                 <tr key={point.label}>
                                     <td>{point.label}</td>
-                                    <td>{point.revenue}</td>
+                                    <td>{formatCurrencyARS(point.revenue)}</td>
                                     <td>{point.sales_count}</td>
                                 </tr>
                             ))}

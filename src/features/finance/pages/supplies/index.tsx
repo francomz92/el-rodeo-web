@@ -69,7 +69,7 @@ const Supplies: React.FC = () => {
     return (
         <section>
             {(isPending || isDeleting || typesIsPending) && <WaveSpinner />}
-            <div className="w-full rounded-2xl border border-border bg-muted/40 p-4 sm:p-6">
+            <div className="w-full rounded-2xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
                     <SelectInput

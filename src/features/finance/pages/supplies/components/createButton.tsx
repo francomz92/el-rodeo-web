@@ -14,13 +14,13 @@ const CreateButton = (props: InviteButtonProps) => {
     return (
         <Button
             type="button"
-            className="max-w-16 place-self-end rounded-lg cursor-pointer"
+            className="max-w-16 place-self-end rounded-lg cursor-pointer bg-background border-border hover:text-background text-foreground"
             onClick={() => props.showCreateModal()}
             disabled={props.createModalIsOpen}
             title="Nuevo"
             aria-label="Registrar uno nuevo"
         >
-            <Plus className="size-4" />
+            <Plus className="size-4!" />
         </Button>
     );
 };

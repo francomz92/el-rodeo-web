@@ -34,14 +34,22 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 <div className="flex items-center">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {value ? (
-                        value.toLocaleString("es-AR", {
-                            hour12: false,
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                        })
+                        !disableTime ? (
+                            value.toLocaleString("es-AR", {
+                                hour12: false,
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                            })
+                        ) : (
+                            value.toLocaleString("es-AR", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                            })
+                        )
                     ) : (
                         <span>{placeholder}</span>
                     )}

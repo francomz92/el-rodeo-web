@@ -1,17 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import type { SalesTotal } from "@analytics/schemas/output/analytics";
+import { formatCurrencyARS } from "@analytics/utils/format";
 
 
 type KpiCardsProps = {
     total?: SalesTotal | null;
 };
 
-const formatCurrency = (value: number): string =>
-    new Intl.NumberFormat("es", {
-        style: "currency",
-        currency: "USD",
-        maximumFractionDigits: 2,
-    }).format(value);
+const formatCurrency = (value: number): string => formatCurrencyARS(value);
 
 const formatNumber = (value: number): string =>
     new Intl.NumberFormat("es", { maximumFractionDigits: 2 }).format(value);
@@ -37,7 +33,7 @@ const KpiCards: React.FC<KpiCardsProps> = ({ total }) => {
     ];
 
     return (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-10">
             {cards.map((card) => (
                 <Card key={card.label}>
                     <CardHeader>

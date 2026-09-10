@@ -4,11 +4,6 @@ import { parseAsString, type inferParserType } from "nuqs";
 
 export const ANALYTICS_MAX_RANGE_DAYS = 365;
 
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
-const dateStringSchema = z
-    .string("Debe ingresar una fecha válida (AAAA-MM-DD)")
-    .regex(DATE_PATTERN, "Debe usar el formato AAAA-MM-DD");
 
 const toUtcMidnight = (value: string): number => {
     const [year, month, day] = value.split("-").map(Number);
@@ -17,8 +12,8 @@ const toUtcMidnight = (value: string): number => {
 
 export const AnalyticsRangeValidationSchema = z
     .object({
-        from_date: dateStringSchema,
-        to_date: dateStringSchema,
+        from_date: z.iso.date("Debe ingresar una fecha válida (AAAA-MM-DD)"),
+        to_date: z.iso.date("Debe ingresar una fecha válida (AAAA-MM-DD)"),
     })
     .refine(
         ({ from_date, to_date }) => from_date <= to_date,

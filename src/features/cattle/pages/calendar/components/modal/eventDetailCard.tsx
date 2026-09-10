@@ -13,6 +13,8 @@ import EventForm from "./eventForm";
 import type { EventStyle, EventTypeColorOptions, ExtendedEventProps } from "../../types";
 import { COLOR_EVENT_TYPE, EVENT_STATUS_CONFIG } from "../../constants";
 import type { UserMeResponseSchema } from "@auth/schemas/output/user";
+import { useProfile } from "@auth/hooks/profile";
+import { PUBLIC_AUTH_ROLES } from "@auth/constants";
 
 export interface EventDetailCardProps {
     event: ExtendedEventProps;
@@ -22,9 +24,11 @@ export interface EventDetailCardProps {
 }
 
 export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose, changeDate, usersList }) => {
+    const { user } = useProfile();
     const { delete: deleteEvent, isDeleting } = useAnimalScheduleEvent();
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
+    const canWrite = user?.role !== PUBLIC_AUTH_ROLES.VIEWER;
     const statusConfig = event.pending ? EVENT_STATUS_CONFIG.pending : EVENT_STATUS_CONFIG.completed;
     const eventStyles: EventStyle = COLOR_EVENT_TYPE[event.type as EventTypeColorOptions];
 
@@ -147,12 +151,16 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
             </CardContent>
 
             <CardFooter className="flex flex-wrap gap-2 pt-4">
-                <Button variant="outline" className="flex-1" onClick={toggleEdit} title="Editar">
-                    <Pencil className="h-4 w-4" />
-                </Button>
-                <Button variant="destructive" className="flex-1" onClick={onDelete} title="Eliminar">
-                    <Trash2 className="h-4 w-4" />
-                </Button>
+                {canWrite && (
+                    <>
+                        <Button variant="outline" className="flex-1" onClick={toggleEdit} title="Editar">
+                            <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="destructive" className="flex-1" onClick={onDelete} title="Eliminar">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </>
+                )}
             </CardFooter>
         </>
     );

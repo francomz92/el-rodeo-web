@@ -10,7 +10,7 @@ interface SelectInputProps {
 const SelectInput: React.FC<SelectInputProps> = ({ defaultValue, onValueChange, options }) => {
     return (
         <Select.Root value={defaultValue} onValueChange={(v) => onValueChange(v ?? "")}>
-            <Select.Trigger className="flex h-9 w-full items-center justify-between rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 data-popup-open:border-ring data-popup-open:bg-accent">
+            <Select.Trigger className="flex h-9 w-full items-center justify-between rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 data-popup-open:border-ring data-popup-open:bg-accent hover:cursor-pointer">
                 <Select.Value placeholder={defaultValue || "--"} />
                 <Select.Icon className="text-muted-foreground">
                     <ChevronDown className="size-4" />

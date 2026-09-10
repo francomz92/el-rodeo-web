@@ -59,7 +59,7 @@ const AnalyticsPage: React.FC = () => {
 
     return (
         <section aria-label="Analíticas" className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
+            {/*<div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <h1 className="text-xl font-semibold">Analíticas</h1>
                     <p className="text-muted-foreground">
@@ -80,15 +80,38 @@ const AnalyticsPage: React.FC = () => {
                         variant={chartType === "bar" ? "default" : "outline"}
                         aria-pressed={chartType === "bar"}
                         onClick={() => setChartType("bar")}
+                        disabled={!Boolean(points.length)}
                     >
                         Barras
                     </Button>
                 </div>
-            </div>
+            </div>*/}
 
             <AnalyticsFilter queryParams={queryParams} setQueryParams={setQueryParams} />
 
             <KpiCards total={salesSummary?.data.total} />
+
+            <div className="mt-10 flex gap-2 w-full justify-center" role="group" aria-label="Tipo de gráfico de ventas">
+                <Button
+                    type="button"
+                    variant={chartType === "line" ? "default" : "outline"}
+                    aria-pressed={chartType === "line"}
+                    onClick={() => setChartType("line")}
+                    className="hover:cursor-pointer"
+                >
+                    Líneas
+                </Button>
+                <Button
+                    type="button"
+                    variant={chartType === "bar" ? "default" : "outline"}
+                    aria-pressed={chartType === "bar"}
+                    onClick={() => setChartType("bar")}
+                    disabled={!Boolean(points.length)}
+                    className="hover:cursor-pointer"
+                >
+                    Barras
+                </Button>
+            </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
                 <InventoryDoughnut

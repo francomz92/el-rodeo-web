@@ -3,6 +3,7 @@ import { Doughnut } from "react-chartjs-2";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
 import { WaveSpinner } from "@components/index";
 import { resolveChartColors } from "@analytics/utils/charts";
+import { formatGeneratedAt } from "@analytics/utils/format";
 import type { InventorySummaryData } from "@analytics/schemas/output/analytics";
 
 
@@ -19,9 +20,7 @@ const InventoryDoughnut: React.FC<InventoryDoughnutProps> = ({
     isError,
     generatedAt,
 }) => {
-    const stalenessLabel = generatedAt
-        ? `Actualizado: ${generatedAt}`
-        : "Fecha de actualización no disponible";
+    const stalenessLabel = formatGeneratedAt(generatedAt);
 
     if (isError) {
         return (
@@ -74,9 +73,9 @@ const InventoryDoughnut: React.FC<InventoryDoughnutProps> = ({
                 <CardDescription>{stalenessLabel}</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="relative">
+                <div className="relative h-72">
                     {isPending && <WaveSpinner />}
-                    <div role="img" aria-label={ariaSummary}>
+                    <div role="img" aria-label={ariaSummary} className="w-full h-full">
                         <Doughnut
                             data={{
                                 labels,
@@ -90,6 +89,7 @@ const InventoryDoughnut: React.FC<InventoryDoughnutProps> = ({
                             }}
                             options={{
                                 responsive: true,
+                                maintainAspectRatio: false,
                                 plugins: {
                                     legend: { position: "bottom" },
                                 },

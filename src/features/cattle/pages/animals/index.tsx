@@ -94,13 +94,13 @@ const Animals: React.FC = () => {
     return (
         <section>
             {(isLoading || isDeleting || typesIsLoading) && <WaveSpinner />}
-            <div className="w-full rounded-2xl border border-border bg-muted/40 p-4 sm:p-6">
+            <div className="w-full rounded-2xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
                     <SelectInput
                         defaultValue={selectedType?.name ?? "Todos"}
                         onValueChange={updateType}
-                        options={{Todos: "", ...animalTypes}}
+                        options={{ Todos: "", ...animalTypes }}
                     />
                     <SearchInput
                         value={caravanaSearched ?? ""}
