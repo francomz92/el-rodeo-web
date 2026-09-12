@@ -65,7 +65,7 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, 
                                             id="name"
                                             type="text"
                                             defaultValue={user?.name}
-                                            className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                            className="h-11 text-sm text-foreground font-normal shadow-none"
                                             disabled
                                         />
                                     </Field>
@@ -77,7 +77,7 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, 
                                             id="email"
                                             type="email"
                                             defaultValue={user?.email}
-                                            className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                            className="h-11 text-sm text-foreground font-normal shadow-none"
                                             disabled
                                         />
                                     </Field>
@@ -89,7 +89,7 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, 
                                             id="dni"
                                             type="text"
                                             defaultValue={user?.dni}
-                                            className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                            className="h-11 shadow-none text-sm text-foreground font-normal"
                                             disabled
                                         />
                                     </Field>
@@ -103,7 +103,7 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, 
                                                     id="role"
                                                     type="text"
                                                     defaultValue={getCurrentRole(user?.role, roleOptions)}
-                                                    className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                                    className="h-11 shadow-none text-sm text-foreground font-normal"
                                                     disabled
                                                 />
                                             </>
@@ -126,7 +126,7 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, 
                 <CardFooter className="[.border-t]:pt-5 py-5 px-6 border-t border-border flex justify-center gap-5 bg-card">
                     <div className="flex gap-3 items-center">
                         <Button
-                            className="rounded-lg cursor-pointer h-9 hover:bg-primary/80"
+                            className="rounded-lg cursor-pointer h-10"
                             type="submit"
                             disabled={!switchEditEnabled || form.isSubmitting || !form.isValid}
                             form="user-form"

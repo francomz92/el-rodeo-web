@@ -58,76 +58,60 @@ const AnalyticsPage: React.FC = () => {
     }));
 
     return (
-        <section aria-label="Analíticas" className="flex flex-col gap-6">
-            {/*<div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-semibold">Analíticas</h1>
-                    <p className="text-muted-foreground">
-                        Inventario actual y evolución de las ventas.
-                    </p>
-                </div>
-                <div className="flex gap-2" role="group" aria-label="Tipo de gráfico de ventas">
+        <section aria-label="Analíticas" className="flex flex-col gap-6 sm:gap-8">
+            <AnalyticsFilter queryParams={queryParams} setQueryParams={setQueryParams} />
+
+            <KpiCards total={salesSummary?.data.total} />
+
+            <div className="flex w-full justify-center">
+                <div
+                    className="inline-flex items-center gap-1 rounded-lg border border-border bg-card p-1"
+                    role="group"
+                    aria-label="Tipo de gráfico de ventas"
+                >
                     <Button
                         type="button"
-                        variant={chartType === "line" ? "default" : "outline"}
+                        variant={chartType === "line" ? "default" : "ghost"}
+                        size="sm"
                         aria-pressed={chartType === "line"}
                         onClick={() => setChartType("line")}
+                        className="hover:cursor-pointer"
                     >
                         Líneas
                     </Button>
                     <Button
                         type="button"
-                        variant={chartType === "bar" ? "default" : "outline"}
+                        variant={chartType === "bar" ? "default" : "ghost"}
+                        size="sm"
                         aria-pressed={chartType === "bar"}
                         onClick={() => setChartType("bar")}
                         disabled={!Boolean(points.length)}
+                        className="hover:cursor-pointer"
                     >
                         Barras
                     </Button>
                 </div>
-            </div>*/}
-
-            <AnalyticsFilter queryParams={queryParams} setQueryParams={setQueryParams} />
-
-            <KpiCards total={salesSummary?.data.total} />
-
-            <div className="mt-10 flex gap-2 w-full justify-center" role="group" aria-label="Tipo de gráfico de ventas">
-                <Button
-                    type="button"
-                    variant={chartType === "line" ? "default" : "outline"}
-                    aria-pressed={chartType === "line"}
-                    onClick={() => setChartType("line")}
-                    className="hover:cursor-pointer"
-                >
-                    Líneas
-                </Button>
-                <Button
-                    type="button"
-                    variant={chartType === "bar" ? "default" : "outline"}
-                    aria-pressed={chartType === "bar"}
-                    onClick={() => setChartType("bar")}
-                    disabled={!Boolean(points.length)}
-                    className="hover:cursor-pointer"
-                >
-                    Barras
-                </Button>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
-                <InventoryDoughnut
-                    data={inventorySummary?.data}
-                    isPending={inventoryIsPending}
-                    isError={inventoryIsError}
-                    generatedAt={inventorySummary?.generated_at ?? undefined}
-                />
-                <SalesTrend
-                    points={points}
-                    chartType={chartType}
-                    isPending={salesIsPending}
-                    isError={salesIsError}
-                    generatedAt={salesSummary?.generated_at ?? undefined}
-                    granularityLabel={granularityLabel}
-                />
+            <div className="grid gap-6 lg:grid-cols-5">
+                <div className="lg:col-span-2">
+                    <InventoryDoughnut
+                        data={inventorySummary?.data}
+                        isPending={inventoryIsPending}
+                        isError={inventoryIsError}
+                        generatedAt={inventorySummary?.generated_at ?? undefined}
+                    />
+                </div>
+                <div className="lg:col-span-3">
+                    <SalesTrend
+                        points={points}
+                        chartType={chartType}
+                        isPending={salesIsPending}
+                        isError={salesIsError}
+                        generatedAt={salesSummary?.generated_at ?? undefined}
+                        granularityLabel={granularityLabel}
+                    />
+                </div>
             </div>
         </section>
     );

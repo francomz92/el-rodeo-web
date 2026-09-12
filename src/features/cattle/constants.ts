@@ -34,9 +34,9 @@ export const ANIMAL_STATUS = {
 };
 
 export const STATUS_STYLES: Record<string, string> = {
-    Disponible: "bg-teal-400/15 text-teal-600",
-    "No disponible": "bg-orange-400/15 text-orange-500",
-    Vendido: "bg-blue-400/15 text-blue-500",
+    Disponible: "badge-role badge-role-ok",
+    "No disponible": "badge-role badge-role-warn",
+    Vendido: "badge-role badge-role-info",
 };
 
 export const ANIMAL_TYPES = {

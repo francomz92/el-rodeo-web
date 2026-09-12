@@ -60,11 +60,11 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
     return (
         <>
             <CardHeader className="space-y-0 pb-4! flex-col items-center">
-                <div className="flex items-center gap-3 border rounded-xl! p-2">
+                <div className="flex items-center gap-3 border border-border rounded-xl! p-2">
                     <div className={`h-8 w-1 rounded-full ${event.style.bgColor}`} />
                     <div>
-                        <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
-                        <Badge variant={statusConfig.variant} className="mt-1">
+                        <h3 className="font-display text-2xl font-semibold tracking-wide text-foreground">{event.title}</h3>
+                        <Badge className={cn("mt-1 rounded-md", statusConfig.className)}>
                             {statusConfig.label}
                         </Badge>
                     </div>
@@ -100,7 +100,7 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
                     <div className="ml-7">
                         <Badge
                             variant="outline"
-                            className={cn("font-medium text-gray-500", eventStyles.bgColorMuted, eventStyles.borderColor)}
+                            className={cn("rounded-md font-semibold text-foreground", eventStyles.bgColorMuted, eventStyles.borderColor)}
                         >
                             {event.type}
                         </Badge>
@@ -109,7 +109,7 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
 
                 <Separator />
 
-                {/* Responsible Person */}
+                {/* Participants */}
                 <div className="space-y-2">
                     <div className="flex items-center gap-3 text-sm">
                         <Users className="h-4 w-4 text-muted-foreground" />
@@ -121,8 +121,8 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
                                 const splitedName = participant.name.split(" ").map((word) => word[0].toUpperCase());
                                 return (
                                     <div key={participant.id} className="flex gap-2 items-center justify-start w-full">
-                                        <Avatar className="h-6 w-6">
-                                            <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-medium">
+                                        <Avatar className="h-8 w-8">
+                                            <AvatarFallback className="bg-accent text-accent-foreground text-xs font-medium">
                                                 {splitedName.join("")}
                                             </AvatarFallback>
                                         </Avatar>
@@ -130,7 +130,7 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
                                     </div>
                                 );
                             })}
-                        {event.participants.length === 0 && <span className="text-xs text-gray-700">No hay</span>}
+                        {event.participants.length === 0 && <span className="font-mono text-xs text-muted-foreground">No hay</span>}
                     </div>
                 </div>
 

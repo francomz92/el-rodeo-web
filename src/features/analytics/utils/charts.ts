@@ -32,7 +32,7 @@ export const CHART_CSS_VARS = [
     "--chart-5",
 ] as const;
 
-const CHART_COLOR_FALLBACKS = ["#4f81bd", "#78b36a", "#e0a030", "#b464c8", "#4fb3b3"];
+const CHART_COLOR_FALLBACKS = ["#2e7d4f", "#b7791f", "#4a6fa5", "#c05a2e", "#3e6b5e"];
 
 const readCssVar = (name: string): string | null => {
     if (typeof window === "undefined" || typeof getComputedStyle === "undefined") {

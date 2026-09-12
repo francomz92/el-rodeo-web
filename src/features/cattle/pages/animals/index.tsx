@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { SelectInput, SearchInput, WaveSpinner, ListPagination } from "@components/index";
+import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
 import { useAnimal, useAnimalList } from "@cattle/hooks/animal";
@@ -89,12 +90,10 @@ const Animals: React.FC = () => {
     //     }
     // };
 
-    if (isLoading) return <WaveSpinner />;
-
     return (
         <section>
-            {(isLoading || isDeleting || typesIsLoading) && <WaveSpinner />}
-            <div className="w-full rounded-2xl border border-border bg-card p-4 sm:p-6">
+            {isDeleting && <WaveSpinner />}
+            <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
                     <SelectInput
@@ -106,13 +105,13 @@ const Animals: React.FC = () => {
                         value={caravanaSearched ?? ""}
                         placeholder="Caravana..."
                         onValueChange={setCaravanaSearched}
-                        className="bg-background shadow-xs border border-input"
+                        className="bg-background border-input shadow-none"
                     />
                     <SearchInput
                         value={breedSearched ?? ""}
                         placeholder="Raza..."
                         onValueChange={setBreedSearched}
-                        className="bg-background shadow-xs border border-input"
+                        className="bg-background border-input shadow-none"
                     />
                     <CreateButton
                         userRole={user?.role}
@@ -122,26 +121,39 @@ const Animals: React.FC = () => {
                 </div>
 
                 {/* Tabla */}
-                <div className="mb-6 overflow-hidden rounded-lg border border-border bg-background">
+                <div className="mb-6 overflow-hidden rounded-xl border border-border bg-background">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-border bg-muted/50 text-center">
-                                    <th className="px-4 py-3 font-medium text-foreground">Caravana</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Tag</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Tipo</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Raza</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Fecha de nacimiento</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Primer pesaje</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Fecha de primer pesaje</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Últimio pesaje</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Estado</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Acciones</th>
+                                <tr className="border-b border-border bg-muted/60 text-center">
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Caravana</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tag</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tipo</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Raza</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha de nacimiento</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Primer pesaje</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha de primer pesaje</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Últimio pesaje</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* Si existen usuarios */}
-                                {animalList?.items?.map((animal) => (
+                                {/* Cargando: esqueletos por fila */}
+                                {(isLoading || typesIsLoading) && (
+                                    <>
+                                        {[0, 1, 2].map((row) => (
+                                            <tr key={`skeleton-${row}`} className="border-b border-border last:border-0">
+                                                <td colSpan={10} className="px-4 py-3">
+                                                    {row === 0 && <span className="sr-only">Cargando...</span>}
+                                                    <div aria-hidden="true" className="h-5 animate-pulse rounded-md bg-muted" />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </>
+                                )}
+                                {/* Si existen animales */}
+                                {!isLoading && !typesIsLoading && animalList?.items?.map((animal) => (
                                     <AnimalTableRow
                                         key={animal.id}
                                         animal={animal}
@@ -152,11 +164,28 @@ const Animals: React.FC = () => {
                                         showProtocolsModal={() => setDisplayModal(Modal.PROTOCOLS)}
                                     />
                                 ))}
-                                {/* Si no existen usuarios */}
-                                {(isError || !animalList?.items?.length) && (
+                                {/* Error con reintento */}
+                                {!isLoading && !typesIsLoading && isError && (
+                                    <tr>
+                                        <td colSpan={10} className="px-4 py-10 text-center">
+                                            <p className="font-medium text-destructive">No se pudieron cargar los animales.</p>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                className="mt-3"
+                                                onClick={() => setQueryParams((prev) => ({ ...prev }))}
+                                            >
+                                                Reintentar
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )}
+                                {/* Vacío con conteo y acción */}
+                                {!isLoading && !typesIsLoading && !isError && !animalList?.items?.length && (
                                     <tr>
                                         <td colSpan={10} className="px-4 py-10 text-center text-muted-foreground">
-                                            No se encontraron usuarios.
+                                            0 animales — No se encontraron animales. Registre uno nuevo con el botón Nuevo.
                                         </td>
                                     </tr>
                                 )}

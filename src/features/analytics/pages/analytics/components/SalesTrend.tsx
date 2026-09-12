@@ -1,8 +1,11 @@
 import { Bar, Line } from "react-chartjs-2";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
+import { Button } from "@components/ui/button";
 import { WaveSpinner } from "@components/index";
 import { resolveChartColor } from "@analytics/utils/charts";
+import salesSummaryQueryKeys from "@analytics/hooks/sales/queryKeys";
 import { formatCurrencyARS, formatGeneratedAt } from "@analytics/utils/format";
 
 
@@ -32,18 +35,29 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
     granularityLabel,
 }) => {
     const stalenessLabel = formatGeneratedAt(generatedAt);
+    const queryClient = useQueryClient();
+    const retry = () => {
+        void queryClient.invalidateQueries({ queryKey: salesSummaryQueryKeys.all });
+    };
 
     if (isError) {
         return (
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tendencia de ventas</CardTitle>
+            <Card className="h-full overflow-hidden rounded-xl border border-border py-0">
+                <div aria-hidden="true" className="h-0.5 w-full bg-destructive" />
+                <CardHeader className="space-y-1 pb-2 pt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ventas</p>
+                    <CardTitle className="font-display text-xl font-semibold tracking-wide">Tendencia de ventas</CardTitle>
                     <CardDescription>{stalenessLabel}</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <p className="px-4 py-10 text-center text-muted-foreground">
-                        No se pudieron cargar los datos de ventas. Intente nuevamente.
+                <CardContent className="space-y-4 pb-5">
+                    <p className="rounded-xl border border-border bg-muted/60 px-4 py-12 text-center text-destructive">
+                        No se pudieron cargar los datos de ventas.
                     </p>
+                    <div className="flex justify-center">
+                        <Button type="button" variant="outline" size="sm" onClick={retry}>
+                            Reintentar
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
         );
@@ -51,14 +65,16 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
 
     if (points.length === 0 && !isPending) {
         return (
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tendencia de ventas</CardTitle>
+            <Card className="h-full overflow-hidden rounded-xl border border-border py-0">
+                <div aria-hidden="true" className="h-0.5 w-full bg-chart-2" />
+                <CardHeader className="space-y-1 pb-2 pt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ventas</p>
+                    <CardTitle className="font-display text-xl font-semibold tracking-wide">Tendencia de ventas</CardTitle>
                     <CardDescription>{stalenessLabel}</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <p className="px-4 py-10 text-center text-muted-foreground">
-                        No se encontraron ventas en el período seleccionado.
+                <CardContent className="pb-5">
+                    <p className="rounded-xl border border-border bg-muted/60 px-4 py-12 text-center text-muted-foreground">
+                        0 períodos — No se encontraron ventas en el período seleccionado.
                     </p>
                 </CardContent>
             </Card>
@@ -67,7 +83,7 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
 
     const labels = points.map((point) => point.label);
     const revenues = points.map((point) => point.revenue);
-    const color = resolveChartColor(0);
+    const color = resolveChartColor(1);
 
     const ariaSummary = `Tendencia de ventas ${granularityLabel}: ${points.length} períodos, `
         + `ingresos de ${labels.length > 0 ? labels[0] : "—"} a ${labels.length > 0 ? labels[labels.length - 1] : "—"}.`;
@@ -78,7 +94,7 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
             {
                 label: "Ingresos",
                 data: revenues,
-                backgroundColor: color,
+                backgroundColor: chartType === "line" ? `color-mix(in srgb, ${color} 12%, transparent)` : color,
                 borderColor: color,
                 fill: chartType === "line",
                 tension: 0.3,
@@ -101,14 +117,16 @@ const SalesTrend: React.FC<SalesTrendProps> = ({
     };
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Tendencia de ventas</CardTitle>
+        <Card className="h-full overflow-hidden rounded-xl border border-border py-0">
+            <div aria-hidden="true" className="h-0.5 w-full bg-chart-2" />
+            <CardHeader className="space-y-1 pb-2 pt-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ventas</p>
+                <CardTitle className="font-display text-xl font-semibold tracking-wide">Tendencia de ventas</CardTitle>
                 <CardDescription>
                     {granularityLabel} · {stalenessLabel}
                 </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pb-5">
                 <div className="relative h-72">
                     {isPending && <WaveSpinner />}
                     <div role="img" aria-label={ariaSummary} className="w-full h-full">

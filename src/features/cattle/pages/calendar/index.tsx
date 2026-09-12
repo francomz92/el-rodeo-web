@@ -48,7 +48,7 @@ const Calendar: React.FC = () => {
                 title: event.title,
                 start: event.start,
                 end: event.end,
-                extendedProps: { ...event, style: COLOR_EVENT_TYPE[event.type as EventTypeColorOptions] },
+                extendedProps: { ...event, style: COLOR_EVENT_TYPE[event.type as EventTypeColorOptions] ?? COLOR_EVENT_TYPE.default },
                 date: event.start,
             })) || [],
         );
@@ -85,7 +85,7 @@ const Calendar: React.FC = () => {
                                     value={selectedDate ?? new Date()}
                                     onChange={setSelectedDate}
                                     disableTime={true}
-                                    className="border! border-border! p-2 text-sm rounded-sm text-primary! bg-(--fc-forma-background)! border-(--fc-forma-muted)! hover:cursor-pointer hover:bg-(--fc-forma-muted)! active:bg-(--fc-forma-strong)!"
+                                    className="border! border-border! p-2 text-sm rounded-lg! text-primary! bg-background! hover:cursor-pointer hover:bg-accent! active:bg-accent!"
                                 />
                             );
                         },
@@ -108,21 +108,21 @@ const Calendar: React.FC = () => {
                     className="lg:w-8/10 w-full"
                     colorScheme={isDark ? "dark" : "light"}
                     headerToolbarClass="border-none! px-0! py-6! bg-transparent!"
-                    viewClass="border rounded-xl!"
-                    buttonGroupClass="border rounded-t-sm! rounded-b-sm! text-gray-700! bg-(--fc-forma-background)! border-(--fc-forma-muted)!"
+                    viewClass="border border-border rounded-xl!"
+                    buttonGroupClass="border! rounded-md! text-foreground! bg-background! border-border!"
                     buttonClass={(info) => {
-                        let baseClases = "border-none! rounded-none h-9 text-foreground! ";
+                        let baseClases = "border-none! rounded-none! h-9 text-foreground! ";
                         if (!info.isSelected) {
                             return baseClases;
                         }
-                        return baseClases + " text-gray-700! " + COLOR_EVENT_TYPE.default.bgColorMuted;
+                        return baseClases + COLOR_EVENT_TYPE.default.bgColorMuted;
                     }}
                     dayCellTopClass={(info) => {
                         const toDayStyle =
                             info.date.toLocaleDateString() === new Date().toLocaleDateString()
-                                ? `border-t-4! ${COLOR_EVENT_TYPE.default.borderColor}`
+                                ? " shadow-[inset_0_4px_0_0_var(--chart-1)]!"
                                 : "";
-                        return "relative! " + toDayStyle;
+                        return "relative!" + toDayStyle;
                     }}
                     dayCellTopContent={(info) => {
                         return (
@@ -149,8 +149,8 @@ const Calendar: React.FC = () => {
                         let borderColor = event?.extendedProps?.style?.beforeEventStyle ?? COLOR_EVENT_TYPE.default.bgColor;
                         return `hover:cursor-pointer px-2 wrap-break-word! ${borderColor}`;
                     }}
-                    eventInnerClass="text-gray-700!"
-                    eventTimeClass="text-gray-700!"
+                    eventInnerClass="text-foreground!"
+                    eventTimeClass="text-foreground!"
                     eventContent={(info) => {
                         return (
                             <div className="flex! flex-col!">
@@ -158,7 +158,7 @@ const Calendar: React.FC = () => {
                                     {info.event.start?.toLocaleString("es-AR", { hourCycle: "h24", timeStyle: "short" })}-
                                     {info.event.end?.toLocaleString("es-AR", { hourCycle: "h24", timeStyle: "short" })}
                                 </span>
-                                <span className="text-sm font-bold">{info.event.title}</span>
+                                <span className="text-sm font-normal">{info.event.title}</span>
                             </div>
                         );
                     }}
@@ -194,7 +194,7 @@ const Calendar: React.FC = () => {
                     }}
                     blockEventClass={(info) => {
                         const event = info.event as unknown as EventDataInput;
-                        return event.extendedProps.style.bgColorMuted;
+                        return event.extendedProps.style?.bgColorMuted ?? COLOR_EVENT_TYPE.default.bgColorMuted;
                     }}
                     views={{
                         timeGridWeek: {
@@ -217,7 +217,10 @@ const Calendar: React.FC = () => {
                                     </div>
                                 );
                             },
-                            blockEventClass: "rounded-lg!",
+                            blockEventClass: (info) => {
+                                const event = info.event as unknown as EventDataInput;
+                                return `rounded-xl! ${event.extendedProps.style?.bgColorMuted ?? COLOR_EVENT_TYPE.default.bgColorMuted}`;
+                            },
                             slotHeaderInnerClass: "h-8",
                             allDaySlot: false,
                             slotHeaderAlign: "center",
@@ -233,12 +236,12 @@ const Calendar: React.FC = () => {
                             },
                             eventContent: (info) => {
                                 return (
-                                    <div className="w-full text-start text-xs font-bold px-2">
-                                        <span className="relative">
+                                    <div className="w-full flex! flex-col! text-start text-xs font-normal px-2">
+                                        <span className="relative text-sm">
                                             <CalendarClock size={12} className="absolute inset-0 -left-4" />
                                             {info.event.title}
                                         </span>
-                                        <Badge variant="outline" className="text-[10px] bg-white/30 p-2 text-gray-500!">
+                                        <Badge variant="outline" className="text-[10px] rounded-md bg-background/40 p-2 text-muted-foreground!">
                                             {info.event.extendedProps.pending ? "Pendiente" : "Completado"}
                                         </Badge>
                                     </div>

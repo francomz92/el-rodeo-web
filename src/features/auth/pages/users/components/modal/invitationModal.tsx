@@ -60,7 +60,7 @@ const InvitationModalContent: React.FC<InvitationModalContentProps> = ({ onClose
                                         <Input
                                             id="name"
                                             type="text"
-                                            className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                            className="h-11 text-sm text-foreground font-normal shadow-none"
                                             {...form.register("name")}
                                         />
                                         <FieldError
@@ -74,7 +74,7 @@ const InvitationModalContent: React.FC<InvitationModalContentProps> = ({ onClose
                                         <Input
                                             id="email"
                                             type="email"
-                                            className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                            className="h-11 text-sm text-foreground font-normal shadow-none"
                                             {...form.register("email")}
                                         />
                                         <FieldError
@@ -88,7 +88,7 @@ const InvitationModalContent: React.FC<InvitationModalContentProps> = ({ onClose
                                         <Input
                                             id="dni"
                                             type="text"
-                                            className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                            className="h-11 shadow-none text-sm text-foreground font-normal"
                                             {...form.register("dni", {
                                                 onChange: (e) => {
                                                     // Elimina cualquier caracter no numerico que el usuario ingrese
@@ -116,7 +116,7 @@ const InvitationModalContent: React.FC<InvitationModalContentProps> = ({ onClose
                 <CardFooter className="[.border-t]:pt-5 py-5 px-6 border-t border-border flex justify-center gap-5 bg-card">
                     <div className="flex gap-3 items-center">
                         <Button
-                            className="rounded-lg cursor-pointer h-9 hover:bg-primary/80"
+                            className="rounded-lg cursor-pointer h-10"
                             type="submit"
                             disabled={isInviting || form.isSubmitting || !form.isValid}
                             form="invite-form"

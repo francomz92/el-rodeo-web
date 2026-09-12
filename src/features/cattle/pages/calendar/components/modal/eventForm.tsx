@@ -139,11 +139,11 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
 
     return (
         <>
-            <CardHeader className="flex flex-row items-center justify-start space-y-0 pb-4">
-                <div className="flex items-center gap-3 border! rounded-xl! p-2">
-                    <div className="h-8 w-1 rounded-full bg-(--fc-forma-event)" />
+            <CardHeader className="space-y-0 pb-4! flex-col items-center">
+                <div className="flex items-center gap-3 border! border-border rounded-xl! p-2">
+                    <div className="h-8 w-1 rounded-full bg-chart-1" />
                     <div>
-                        <h3 className="text-lg font-semibold text-foreground">{eventToEdit?.id ? "Modificar Evento" : "Crear Evento"}</h3>
+                        <h3 className="font-display text-2xl font-semibold tracking-wide text-foreground">{eventToEdit?.id ? "Modificar Evento" : "Crear Evento"}</h3>
                         <p className="text-sm text-muted-foreground">
                             {eventToEdit?.id ? "Actualiza" : "Completa"} los detalles del evento
                         </p>
@@ -151,7 +151,7 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
                 </div>
             </CardHeader>
 
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="lg:max-w-75">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="w-full">
                 <CardContent className="space-y-4">
                     {/* Title Field */}
                     <Field data-invalid={!!form.errors.title}>
@@ -182,7 +182,7 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
                         {participants.length > 0 &&
                             <span
                                 title={participants.map(p => p.name).join(", ") ?? ""}
-                                className="border border-transparent rounded-2xl bg-input/50 px-3 py-2 text-sm wrap-break-word! text-muted-foreground!"
+                                className="border border-transparent rounded-lg bg-input/50 px-3 py-2 text-sm wrap-break-word! text-muted-foreground!"
                             >
                                 {participants.map(p => p.name).join(", ") ?? ""}
                             </span>
@@ -191,14 +191,14 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
                             value={userSearch ?? ""}
                             placeholder="Buscar..."
                             onValueChange={setUserSearch}
-                            className="bg-background shadow-xs border border-input"
+                            className="bg-background border-input shadow-none"
                         />
                         {form.errors.participants && <FieldError>{form.errors.participants.message}</FieldError>}
                         {Boolean(users?.length) && users.map((u) => {
                             return (
                                 <div className="flex gap-2" key={u.id}>
                                     <input
-                                        className="w-4 accent-foreground!"
+                                        className="w-4 accent-primary!"
                                         type="checkbox"
                                         value={u.id}
                                         placeholder={u.name}
@@ -230,7 +230,7 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
                             }}
                             {...form.register("description")}
                         />
-                        <span className="text-gray-400">{255 - descriptionTrigger?.length} caracteres restantes</span>
+                        <span className="text-muted-foreground">{255 - descriptionTrigger?.length} caracteres restantes</span>
                         {/*<FieldDescription>Detalles del evento (máximo 255 caracteres)</FieldDescription>*/}
                         {form.errors.description && <FieldError>{form.errors.description.message}</FieldError>}
                     </Field>
@@ -276,7 +276,7 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
                     </Field>
                 </CardContent>
 
-                <CardFooter className="flex justify-center pt-4">
+                <CardFooter className="flex justify-center gap-2 pt-4">
                     {eventToEdit?.id && (
                         <Button
                             type="button"

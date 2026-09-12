@@ -19,7 +19,7 @@ const SearchInput = (props: SearchInputProps) => {
                 type="search"
                 placeholder={props.placeholder}
                 onChange={(e) => props.onValueChange(e.target.value)}
-                className={cn("h-10 rounded-lg bg-muted/60 pl-9 shadow-none", props.className)}
+                className={cn("h-11 rounded-lg border-input bg-background pl-9 shadow-none focus-visible:ring-2 focus-visible:ring-ring/50", props.className)}
                 value={props.value}
             />
         </div>

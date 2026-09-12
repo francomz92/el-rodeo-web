@@ -116,7 +116,7 @@ const ProtocolModalContent: React.FC<ProtocolsModalContent> = ({ animal, onClose
                                                     <Input
                                                         id="vaccinated"
                                                         type="checkbox"
-                                                        className={cn(inputStyle, "checked:accent-foreground shadow-none")}
+                                                        className={cn(inputStyle, "checked:accent-primary shadow-none")}
                                                         {...form.register("vaccinated")}
                                                         disabled={!switchEditEnabled}
                                                     />
@@ -166,7 +166,7 @@ const ProtocolModalContent: React.FC<ProtocolsModalContent> = ({ animal, onClose
                                                     <Input
                                                         id="sale_permission"
                                                         type="checkbox"
-                                                        className={cn(inputStyle, "checked:accent-foreground shadow-none")}
+                                                        className={cn(inputStyle, "checked:accent-primary shadow-none")}
                                                         {...form.register("sale_permission")}
                                                         disabled={!switchEditEnabled}
                                                     />
@@ -210,7 +210,7 @@ const ProtocolModalContent: React.FC<ProtocolsModalContent> = ({ animal, onClose
                 <CardFooter className="[.border-t]:pt-5 py-5 px-6 border-t border-border flex justify-center gap-5 bg-card">
                     <div className="flex gap-3 items-center">
                         <Button
-                            className="rounded-lg cursor-pointer h-9 hover:bg-primary/80"
+                            className="rounded-lg cursor-pointer h-10"
                             type="submit"
                             disabled={!switchEditEnabled || form.isSubmitting || !form.isValid}
                             form="update-animal-protocol"

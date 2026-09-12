@@ -59,7 +59,7 @@ const AnalyticsFilter: React.FC<AnalyticsFilterProps> = ({ queryParams, setQuery
     };
 
     return (
-        <div className="grid gap-4 sm:w-max sm:grid-cols-[1fr_1fr_auto] sm:items-start mt-10">
+        <div className="grid gap-4 sm:w-max sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             <div className="grid gap-1.5 border border-border rounded-xl p-4 bg-card">
                 <Label>Fecha de inicio</Label>
                 <DateTimePicker
@@ -69,7 +69,7 @@ const AnalyticsFilter: React.FC<AnalyticsFilterProps> = ({ queryParams, setQuery
                     }}
                     placeholder="Desde"
                     disableTime
-                    className="bg-input/50 shadow-xs border border-input rounded-md px-3 py-2 text-sm hover:cursor-pointer hover:bg-input"
+                    className="bg-background border-input rounded-lg px-3 py-2 text-sm shadow-none hover:cursor-pointer hover:bg-accent"
                 />
             </div>
             <div className="grid gap-1.5 border border-border rounded-xl p-4 bg-card">
@@ -81,14 +81,14 @@ const AnalyticsFilter: React.FC<AnalyticsFilterProps> = ({ queryParams, setQuery
                     }}
                     placeholder="Hasta"
                     disableTime
-                    className="bg-input/50 shadow-xs border border-input rounded-md px-3 py-2 text-sm hover:cursor-pointer hover:bg-input"
+                    className="bg-background border-input rounded-lg px-3 py-2 text-sm shadow-none hover:cursor-pointer hover:bg-accent"
                 />
             </div>
-            <div className="grid gap-1.5 h-full place-content-center">
+            <div className="grid gap-1.5 content-end pb-0.5">
                 <Button
                     type="button"
                     onClick={applyFilters}
-                    className="hover:cursor-pointer bg-card border-border hover:text-background text-foreground rounded-2xl p-5"
+                    className="hover:cursor-pointer rounded-lg h-10 px-5"
                 >
                     Aplicar filtros
                 </Button>

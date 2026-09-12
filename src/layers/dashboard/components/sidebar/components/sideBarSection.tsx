@@ -14,7 +14,7 @@ const SidebarSection = ({ section, isActive, isCollapsed }: SidebarSectionProps)
         <div className="space-y-1.5">
             <p
                 className={cn(
-                    "px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
+                    "px-3 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/60",
                     isCollapsed ? "text-xl" : undefined,
                 )}
                 title={section.label}

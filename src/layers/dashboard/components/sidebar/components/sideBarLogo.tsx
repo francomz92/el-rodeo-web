@@ -10,10 +10,10 @@ const SidebarLogo = ({ userTenant, isCollapsed }: SidebarLogoProps) => {
 
     return (
         <Link to="/" className={"h-16 shrink-0 flex items-center gap-2.5 " + (isCollapsed ? "justify-center px-0" : "px-6")}>
-            <span className="grid size-9 place-items-center rounded-full bg-foreground text-sm font-bold text-background">
+            <span className="grid size-9 place-items-center rounded-full bg-sidebar-primary font-display text-lg font-semibold text-sidebar-primary-foreground">
                 { userTenant?.name?.[0].toLowerCase() }
             </span>
-            { !isCollapsed && <span className="text-lg font-bold tracking-tight">{ userTenant?.name }</span> }
+            { !isCollapsed && <span className="font-display text-2xl font-semibold tracking-wide text-sidebar-foreground">{ userTenant?.name }</span> }
         </Link>
     );
 };

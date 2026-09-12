@@ -6,6 +6,12 @@ const NotificationToaster = () => {
         position="top-right"
         richColors
         closeButton
+        toastOptions={{
+            classNames: {
+                toast: "rounded-xl border border-border shadow-md",
+                title: "font-semibold",
+            },
+        }}
     />
 }
 

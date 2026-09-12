@@ -82,7 +82,7 @@ const Profile: React.FC = () => {
                                                     id="name"
                                                     type="text"
                                                     defaultValue={user?.name}
-                                                    className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                                    className="h-11 text-sm text-foreground font-normal shadow-none"
                                                     {...dataForm.register("name")}
                                                     disabled={!editProfileSwitch}
                                                 />
@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
                                                     id="email"
                                                     type="email"
                                                     defaultValue={user?.email}
-                                                    className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                                    className="h-11 text-sm text-foreground font-normal shadow-none"
                                                     {...dataForm.register("email")}
                                                     disabled={!editProfileSwitch}
                                                 />
@@ -129,7 +129,7 @@ const Profile: React.FC = () => {
                                                     id="dni"
                                                     type="text"
                                                     defaultValue={user?.dni}
-                                                    className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                                    className="h-11 shadow-none text-sm text-foreground font-normal"
                                                     disabled
                                                 />
                                             </Field>
@@ -158,7 +158,7 @@ const Profile: React.FC = () => {
                                                 <Input
                                                     id="password"
                                                     type="password"
-                                                    className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                                    className="h-11 text-sm text-foreground font-normal shadow-none"
                                                     {...passwordForm.register("password")}
                                                     disabled={editProfileSwitch}
                                                 />
@@ -186,7 +186,7 @@ const Profile: React.FC = () => {
                                                     type="password"
                                                     autoComplete="off"
                                                     aria-autocomplete="none"
-                                                    className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                                    className="h-11 text-sm text-foreground font-normal shadow-none"
                                                     {...passwordForm.register("new_password")}
                                                     disabled={editProfileSwitch}
                                                 />
@@ -214,7 +214,7 @@ const Profile: React.FC = () => {
                                                     type="password"
                                                     autoComplete="off"
                                                     aria-autocomplete="none"
-                                                    className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                                    className="h-11 text-sm text-foreground font-normal shadow-none"
                                                     {...passwordForm.register("confirmed_password")}
                                                     disabled={editProfileSwitch}
                                                 />
@@ -246,7 +246,7 @@ const Profile: React.FC = () => {
                         <CardFooter className="[.border-t]:pt-5 py-5 px-6 border-t border-border flex justify-center gap-5 bg-card">
                             <div className="flex gap-3 items-center">
                                 <Button
-                                    className="rounded-lg cursor-pointer h-9 hover:bg-primary/80"
+                                    className="rounded-lg cursor-pointer h-10"
                                     type="submit"
                                     disabled={
                                         editProfileSwitch

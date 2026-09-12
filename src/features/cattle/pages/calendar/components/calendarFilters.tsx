@@ -53,13 +53,13 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                 <div className="flex flex-col gap-1.5 min-w-40 p-4 border border-border rounded-xl bg-card">
                     <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tipo</label>
                     <Select value={capitalize(filters.type) || "Todos"} onValueChange={(v) => handleFilterChange("type", v)}>
-                        <SelectTrigger className="w-full rounded-lg! hover:bg-input hover:cursor-pointer">
+                        <SelectTrigger className="w-full rounded-lg! h-11 hover:bg-input hover:cursor-pointer">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-lg! max-h-50!">
-                            <SelectItem value={null} className="rounded-lg!">Todos</SelectItem>
+                        <SelectContent className="rounded-xl! max-h-50!">
+                            <SelectItem value={null} className="rounded-xl!">Todos</SelectItem>
                             {Object.entries(EVENT_TYPE_LABELS).map(([key, label]) => (
-                                <SelectItem key={key} value={key} className="rounded-lg!">
+                                <SelectItem key={key} value={key} className="rounded-xl!">
                                     {capitalize(label)}
                                 </SelectItem>
                             ))}
@@ -74,14 +74,14 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                         <PopoverTrigger
                             role="combobox"
                             aria-expanded={open}
-                            className="flex max-w-50 items-center justify-between gap-1.5 border border-transparent bg-input/50 px-3 py-2 text-sm whitespace-nowrap outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 rounded-lg!  hover:bg-input hover:cursor-pointer"
+                            className="flex max-w-50 h-11 items-center justify-between gap-1.5 border border-input bg-background px-3 py-2 text-sm whitespace-nowrap outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 rounded-lg! hover:bg-input hover:cursor-pointer"
                         >
                             <span className="truncate">{selectedParticipants?.map((p) => p.name).join(", ") || "Todos"}</span>
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </PopoverTrigger>
-                        <PopoverContent className="w-full max-w-60 p-0 rounded-lg! max-h-50!" align="start">
+                        <PopoverContent className="w-full max-w-60 p-0 rounded-xl! max-h-50!" align="start">
                             <Command>
-                                <CommandInput placeholder="Buscar participante..." className="h-9 rounded-lg!" />
+                                <CommandInput placeholder="Buscar participante..." className="h-9 rounded-xl!" />
                                 <CommandList>
                                     <CommandEmpty>No se encontró el participante.</CommandEmpty>
                                     <CommandGroup>
@@ -93,7 +93,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                                                     handleFilterChange("participants", participante.id);
                                                     setOpen(false);
                                                 }}
-                                                className="bg-(--input)! rounded-lg!"
+                                                className="bg-input! rounded-lg!"
                                             >
                                                 <Check
                                                     className={cn(
@@ -122,10 +122,10 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                         value={filters.pending === null ? "Todos" : filters.pending ? "Pendiente" : "Completado"}
                         onValueChange={(v) => handleFilterChange("pending", v)}
                     >
-                        <SelectTrigger className="w-full rounded-lg! hover:bg-input hover:cursor-pointer">
+                        <SelectTrigger className="w-full rounded-lg! h-11 hover:bg-input hover:cursor-pointer">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-lg! max-h-50!">
+                        <SelectContent className="rounded-xl! max-h-50!">
                             <SelectItem value={null} className="rounded-lg!">Todos</SelectItem>
                             {Object.entries(EVENT_STATUS_LABELS).map(([key, label]) => (
                                 <SelectItem key={key} value={key === "pendiente"} className="rounded-lg!">
@@ -139,8 +139,8 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                 {/* 5. CONTADOR Y LIMPIAR */}
                 <div className="flex items-center gap-2 ml-auto">
                     {activeFiltersCount > 0 && (
-                        <Badge variant="secondary" className="gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                        <Badge variant="secondary" className="gap-1.5 rounded-md">
+                            <span className="size-1.5 rounded-full bg-chart-1" />
                             {activeFiltersCount} filtro{activeFiltersCount !== 1 ? "s" : ""} activo{activeFiltersCount !== 1 ? "s" : ""}
                         </Badge>
                     )}
@@ -159,7 +159,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                     {Boolean(filters.type) && (
                         <Badge
                             variant="outline"
-                            className={cn("gap-1.5 px-3 py-1 font-bold text-gray-600 h-10 border-none! rounded-xl bg-(--input)", COLOR_EVENT_TYPE[filters.type!].bgColorMuted)}
+                            className={cn("gap-1.5 px-3 py-1 font-semibold text-foreground h-10 border-none! rounded-md bg-input", COLOR_EVENT_TYPE[filters.type!].bgColorMuted)}
                         >
                             {capitalize(EVENT_TYPE_LABELS[filters.type as EventLabelType])}
                             <button
@@ -174,7 +174,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                     )}
 
                     {Boolean(filters?.participants?.length) && (
-                        <Badge variant="outline" className="gap-1.5 px-3 max-w-50! py-1 font-bold text-gray-600 h-10 border-none! rounded-xl bg-gray-100">
+                        <Badge variant="outline" className="gap-1.5 px-3 max-w-50! py-1 font-semibold text-foreground h-10 border-none! rounded-md bg-muted">
                             <span className="truncate">{selectedParticipants?.map((p) => p.name).join(", ") ?? "Todos"}</span>
                             <button
                                 type="button"
@@ -188,7 +188,7 @@ const CalendarFilters: React.FC<CalendarFiltersProps> = ({ filters, onFiltersCha
                     )}
 
                     {filters.pending !== null && (
-                        <Badge variant="outline" className="gap-1.5 px-3 py-1 font-bold text-gray-600 h-10 border-none! rounded-xl bg-gray-100">
+                        <Badge variant="outline" className="gap-1.5 px-3 py-1 font-semibold text-foreground h-10 border-none! rounded-md bg-muted">
                             {EVENT_STATUS_LABELS[filters.pending ? "pendiente" : "completado"]}
                             <button
                                 type="button"

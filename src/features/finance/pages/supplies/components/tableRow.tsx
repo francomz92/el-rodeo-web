@@ -20,18 +20,19 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ supply, select, deleteSupply, 
         <tr
             key={supply.id}
             className="
+            h-12
             border-b
             border-border
             transition-colors
             last:border-0
-            hover:bg-muted/30
-            data-[selected=true]:bg-muted/50
+            hover:bg-accent/40
+            data-[selected=true]:bg-accent/40
             text-center"
         >
-            <td className="px-4 py-3">{supply.name}</td>
+            <td className="px-4 py-3 font-mono">{supply.name}</td>
             <td className="px-4 py-3 text-foreground">{supply.type.name}</td>
-            <td className="px-4 py-3 text-foreground">{supply.amount} {supply.unit_of_measurement}</td>
-            <td className="px-4 py-3 text-foreground">{supply.critical_amount} {supply.unit_of_measurement}</td>
+            <td className="px-4 py-3 text-foreground tabular-nums">{supply.amount} {supply.unit_of_measurement}</td>
+            <td className="px-4 py-3 text-foreground tabular-nums">{supply.critical_amount} {supply.unit_of_measurement}</td>
             <td className="px-4 py-3 text-foreground">{supply.description}</td>
             {/*<td className="px-4 py-3">
                 <StatusBadge status={getStatus(animal.status)} statusOptions={STATUS_STYLES} />
@@ -43,14 +44,14 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ supply, select, deleteSupply, 
                         title="Ver"
                         onClick={displayAnimalModal}
                         className="
-                        rounded-md
+                        rounded-full
                         p-2
                         text-foreground
                         transition-colors
-                        hover:bg-muted
-                        hover:text-blue-500
-                        focus-visible:ring-[3px]
-                        focus-visible:ring-ring/40
+                        hover:bg-accent
+                        hover:text-chart-3
+                        focus-visible:ring-2
+                        focus-visible:ring-ring/50
                         outline-none"
                     >
                         <Eye className="size-4" />
@@ -60,14 +61,14 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ supply, select, deleteSupply, 
                         title="Eliminar"
                         onClick={deleteSupply}
                         className="
-                        rounded-md
+                        rounded-full
                         p-2
                         text-foreground
                         transition-colors
-                        hover:bg-muted
+                        hover:bg-accent
                         hover:text-destructive
-                        focus-visible:ring-[3px]
-                        focus-visible:ring-ring/40
+                        focus-visible:ring-2
+                        focus-visible:ring-ring/50
                         outline-none"
                         disabled={isDeleting}
                     >

@@ -19,14 +19,14 @@ const Sidebar = () => {
                 aria-hidden="true"
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                    "fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity md:hidden",
+                    "fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity md:hidden",
                     isMobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
                 )}
             />
 
             <aside
                 className={cn(
-                    "fixed inset-y-0 w-72 left-0 z-50 flex flex-col border-r border-border bg-background transition-transform duration-300",
+                    "fixed inset-y-0 w-72 left-0 z-50 flex flex-col rounded-none border-r border-sidebar-border bg-sidebar transition-transform duration-300",
                     isMobileOpen ? "translate-x-0" : "-translate-x-full",
                     "md:translate-x-0",
                     isCollapsed && "md:w-18 text-end",

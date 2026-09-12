@@ -19,7 +19,7 @@ const Login: React.FC = () => {
     return (
         <div className="min-w-dvw min-h-dvh flex items-center justify-center">
             {isLoggingIn && <WaveSpinner texts={["Entrando...", "Entrando..."]} />}
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-sm rounded-xl border border-border p-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-sm rounded-xl border border-border p-6 sm:p-8">
                 <FieldGroup>
                     <Field data-invalid={Boolean(form.errors?.dni)}>
                         <FieldLabel htmlFor="signin-dni">DNI</FieldLabel>
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
                     <Field>
                         <Button
                             type="submit"
-                            className="hover:bg-primary/80 cursor-pointer"
+                            className="cursor-pointer h-10"
                             disabled={form.isSubmitting || !form.isValid || isLoggingIn}
                         >
                             Entrar

@@ -16,7 +16,7 @@ const CartButton = () => {
   return (
     <Button variant="ghost" size="icon" className="relative rounded-full">
       <ShoppingCart className="size-4.5" />
-      <Badge className="absolute -right-1 -top-0.5 grid size-5 place-items-center rounded-full border-0 bg-foreground p-0 text-[10px] text-background">
+      <Badge className="absolute -right-1 -top-0.5 grid size-5 place-items-center rounded-full border-0 bg-primary p-0 text-[10px] text-primary-foreground">
         11
       </Badge>
       <span className="sr-only">Carrito</span>
@@ -28,7 +28,7 @@ const NotificationsButton = () => {
   return (
     <Button variant="ghost" size="icon" className="relative rounded-full">
       <Bell className="size-4.5" />
-      <span className="absolute right-2 top-1.5 size-2 rounded-full bg-red-500 ring-2 ring-background" />
+      <span className="absolute right-2 top-1.5 size-2 rounded-full bg-destructive ring-2 ring-background" />
       <span className="sr-only">Notificaciones</span>
     </Button>
   );

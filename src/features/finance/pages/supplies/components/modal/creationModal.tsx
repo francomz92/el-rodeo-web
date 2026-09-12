@@ -167,7 +167,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                 <CardFooter className="[.border-t]:pt-5 py-5 px-6 border-t border-border flex justify-center gap-5 bg-card">
                     <div className="flex gap-3 items-center">
                         <Button
-                            className="rounded-lg cursor-pointer h-9 hover:bg-primary/80"
+                            className="rounded-lg cursor-pointer h-10"
                             type="submit"
                             disabled={isCreating || form.isSubmitting || !form.isValid}
                             form="create-animal-form"

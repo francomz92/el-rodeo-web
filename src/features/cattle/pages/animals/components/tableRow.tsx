@@ -29,22 +29,23 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ animal, select, deleteAnimal, 
         <tr
             key={animal.id}
             className="
+            h-12
             border-b
             border-border
             transition-colors
             last:border-0
-            hover:bg-muted/30
-            data-[selected=true]:bg-muted/50
+            hover:bg-accent/40
+            data-[selected=true]:bg-accent/40
             text-center"
         >
-            <td className="px-4 py-3">{animal.caravana}</td>
+            <td className="px-4 py-3 font-mono">{animal.caravana}</td>
             <td className="px-4 py-3 text-foreground">{animal.tag}</td>
             <td className="px-4 py-3 text-foreground">{animal.type.name}</td>
             <td className="px-4 py-3 text-foreground">{animal.breed}</td>
             <td className="px-4 py-3 text-foreground">{new Date(animal.date_of_birth).toLocaleDateString()}</td>
-            <td className="px-4 py-3 text-foreground">{animal.initial_weight} Kg</td>
+            <td className="px-4 py-3 text-foreground tabular-nums">{animal.initial_weight} Kg</td>
             <td className="px-4 py-3 text-foreground">{new Date(animal.initial_weight_date).toLocaleDateString()}</td>
-            <td className="px-4 py-3 text-foreground">{animal.last_weight} kg</td>
+            <td className="px-4 py-3 text-foreground tabular-nums">{animal.last_weight} kg</td>
             <td className="px-4 py-3">
                 <StatusBadge status={getStatus(animal.status)} statusOptions={STATUS_STYLES} />
             </td>
@@ -55,14 +56,14 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ animal, select, deleteAnimal, 
                         title="Ver"
                         onClick={displayAnimalModal}
                         className="
-                        rounded-md
+                        rounded-full
                         p-2
                         text-foreground
                         transition-colors
-                        hover:bg-muted
-                        hover:text-blue-500
-                        focus-visible:ring-[3px]
-                        focus-visible:ring-ring/40
+                        hover:bg-accent
+                        hover:text-chart-3
+                        focus-visible:ring-2
+                        focus-visible:ring-ring/50
                         outline-none"
                     >
                         <Eye className="size-4" />
@@ -72,14 +73,14 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ animal, select, deleteAnimal, 
                         title="Eliminar"
                         onClick={deleteAnimal}
                         className="
-                        rounded-md
+                        rounded-full
                         p-2
                         text-foreground
                         transition-colors
-                        hover:bg-muted
+                        hover:bg-accent
                         hover:text-destructive
-                        focus-visible:ring-[3px]
-                        focus-visible:ring-ring/40
+                        focus-visible:ring-2
+                        focus-visible:ring-ring/50
                         outline-none"
                         disabled={isDeleting}
                     >
@@ -90,15 +91,14 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ animal, select, deleteAnimal, 
                         title="Eliminar"
                         onClick={displayProtocolsModal}
                         className="
-                        rounded-md
+                        rounded-full
                         p-2
                         text-foreground
-                        hover:text-green-500
+                        hover:text-chart-1
                         transition-colors
-                        hover:bg-muted
-                        hover:text-destructive
-                        focus-visible:ring-[3px]
-                        focus-visible:ring-ring/40
+                        hover:bg-accent
+                        focus-visible:ring-2
+                        focus-visible:ring-ring/50
                         outline-none"
                     >
                         <ListTodo className="size-4" />

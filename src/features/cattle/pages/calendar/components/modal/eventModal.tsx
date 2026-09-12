@@ -24,13 +24,13 @@ const EventModalContent: React.FC<EventModalContentProps> = ({ events, date, cha
     const canWrite = user?.role !== AUTH_ROLES.VIEWER;
 
     return (
-        <div className="h-full lg:h-[76vh] lg:self-end lg:min-w-75 border rounded-xl p-2 px-8 lg:px-1 pb-8 pt-8 lg:pt-4 bg-(--fc-forma-background)">
+        <div className="h-full w-[calc(100vw-2rem)] max-w-md shrink-0 lg:h-[76vh] lg:self-end border border-border rounded-xl shadow-md p-2 px-8 lg:px-1 pb-8 pt-8 lg:pt-4 bg-card">
             <div className="w-full text-center pb-2">
                 <button onClick={onClose}>
                     <EyeOff className="cursor-pointer" size={16} />
                 </button>
             </div>
-            <Card className="lg:flex lg:justify-around w-full h-full shadow-none ring-0 overflow-y-auto scrollbar-thin bg-inherit">
+            <Card className="lg:flex lg:justify-around w-full h-full border-0 shadow-none ring-0 overflow-y-auto scrollbar-thin bg-inherit">
                 {/*INFO Cuando no hay eventos en la fecha seleccionada, se muestra el formulario de creación */}
                 {canWrite && !selectedEvent?.id && (
                     <EventForm date={date!} changeDate={changeDate} onClose={onClose} usersList={usersList} />

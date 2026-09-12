@@ -64,7 +64,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <Input
                                             id="caravana"
                                             type="text"
-                                            className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                            className="h-11 text-sm text-foreground font-normal shadow-none"
                                             {...form.register("caravana")}
                                         />
                                         <FieldError
@@ -80,7 +80,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <Input
                                             id="tag"
                                             type="text"
-                                            className="dark:bg-background h-9 text-sm shadow-xs text-muted-foreground font-normal"
+                                            className="h-11 text-sm text-foreground font-normal shadow-none"
                                             {...form.register("tag")}
                                         />
                                         <FieldError
@@ -100,7 +100,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <Input
                                             id="breed"
                                             type="text"
-                                            className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                            className="h-11 shadow-none text-sm text-foreground font-normal"
                                             {...form.register("breed")}
                                         />
                                         <FieldError
@@ -114,7 +114,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <Input
                                             id="date_of_birth"
                                             type="date"
-                                            className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                            className="h-11 shadow-none text-sm text-foreground font-normal"
                                             {...form.register("date_of_birth")}
                                         />
                                         <FieldError
@@ -132,7 +132,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <Input
                                             id="initial_weight"
                                             type="text"
-                                            className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                            className="h-11 shadow-none text-sm text-foreground font-normal"
                                             {...form.register("initial_weight", {
                                                 onChange: (e) => {
                                                     // Elimina cualquier caracter no numerico que el usuario ingrese
@@ -157,7 +157,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <Input
                                             id="initial_weight_date"
                                             type="date"
-                                            className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
+                                            className="h-11 shadow-none text-sm text-foreground font-normal"
                                             {...form.register("initial_weight_date")}
                                         />
                                         <FieldError
@@ -176,7 +176,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                 <CardFooter className="[.border-t]:pt-5 py-5 px-6 border-t border-border flex justify-center gap-5 bg-card">
                     <div className="flex gap-3 items-center">
                         <Button
-                            className="rounded-lg cursor-pointer h-9 hover:bg-primary/80"
+                            className="rounded-lg cursor-pointer h-10"
                             type="submit"
                             disabled={isCreating || form.isSubmitting || !form.isValid}
                             form="create-animal-form"

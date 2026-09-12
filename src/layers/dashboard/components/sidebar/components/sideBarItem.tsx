@@ -33,8 +33,8 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
                 to={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
-                    active && "bg-foreground text-background shadow-sm hover:bg-foreground hover:text-background",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    active && "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
                 )}
                 title={item.title}
                 aria-label={item.title}
@@ -51,7 +51,7 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
                 type="button"
                 aria-expanded={open}
                 onClick={() => setOpen((v) => !v)}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 title={item.title}
                 aria-label={item.title}
             >
@@ -61,21 +61,21 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
             </button>
 
             {open && (
-                <ul className="ml-6 mt-1 space-y-0.5 border-l border-border pl-4">
+                <ul className="ml-6 mt-1 space-y-0.5 border-l border-sidebar-border pl-4">
                     {item.children!.map((child) => (
                         <li onClick={onClick} key={child.href}>
                             <Link
                                 to={child.href}
                                 className={cn(
-                                    "flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground",
-                                    isActive(child.href) && "font-medium text-foreground",
+                                    "flex items-center justify-between rounded-lg px-2 py-1.5 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                                    isActive(child.href) && "bg-sidebar-primary font-medium text-sidebar-primary-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground",
                                 )}
                                 title={child.title}
                                 aria-label={child.title}
                             >
                                 {child.title}
                                 {child.badge && (
-                                    <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-semibold text-background">
+                                    <span className="rounded-md bg-sidebar-primary px-2 py-0.5 text-[10px] font-semibold text-sidebar-primary-foreground">
                                         {child.badge}
                                     </span>
                                 )}

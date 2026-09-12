@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { SelectInput, SearchInput, WaveSpinner, ListPagination } from "@components/index";
+import { Button } from "@components/ui/button";
 
 import { useDebounce } from "@hooks/index";
 import { UserTableRow, UserModal } from "./components";
@@ -59,12 +60,10 @@ const Users: React.FC = () => {
         }
     };
 
-    if (isLoading) return <WaveSpinner />;
-
     return (
         <section>
-            {(usersListIsPending || isDeleting) && <WaveSpinner />}
-            <div className="w-full rounded-2xl border border-border bg-card p-4 sm:p-6">
+            {isDeleting && <WaveSpinner />}
+            <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
                     <SelectInput
@@ -76,7 +75,7 @@ const Users: React.FC = () => {
                         value={searchTerm ?? ""}
                         placeholder="Buscar..."
                         onValueChange={setSearchTerm}
-                        className="bg-background shadow-xs border border-input"
+                        className="bg-background border-input shadow-none"
                     />
                     <InviteButton
                         userRole={authenitcatedUser?.role}
@@ -86,21 +85,34 @@ const Users: React.FC = () => {
                 </div>
 
                 {/* Tabla */}
-                <div className="mb-6 overflow-hidden rounded-lg border border-border bg-background">
+                <div className="mb-6 overflow-hidden rounded-xl border border-border bg-background">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-border bg-muted/50 text-center">
-                                    <th className="px-4 py-3 font-medium text-foreground">Usuario</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Rol</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Fecha de Creación</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Estado</th>
-                                    <th className="px-4 py-3 font-medium text-foreground">Acciones</th>
+                                <tr className="border-b border-border bg-muted/60 text-center">
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Usuario</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rol</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha de Creación</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {/* Cargando: esqueletos por fila */}
+                                {(isLoading || usersListIsPending) && (
+                                    <>
+                                        {[0, 1, 2].map((row) => (
+                                            <tr key={`skeleton-${row}`} className="border-b border-border last:border-0">
+                                                <td colSpan={5} className="px-4 py-3">
+                                                    {row === 0 && <span className="sr-only">Cargando...</span>}
+                                                    <div aria-hidden="true" className="h-5 animate-pulse rounded-md bg-muted" />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </>
+                                )}
                                 {/* Si existen usuarios */}
-                                {usersList?.items.map((user) => (
+                                {!isLoading && !usersListIsPending && usersList?.items.map((user) => (
                                     <UserTableRow
                                         key={user.id}
                                         authenticatedUser={authenitcatedUser!}
@@ -111,11 +123,28 @@ const Users: React.FC = () => {
                                         roleOptions={SELECT_ROLE_OPTIONS}
                                     />
                                 ))}
-                                {/* Si no existen usuarios */}
-                                {(usersListError || usersList?.items.length === 0) && (
+                                {/* Error con reintento */}
+                                {!isLoading && !usersListIsPending && usersListError && (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-10 text-center">
+                                            <p className="font-medium text-destructive">No se pudieron cargar los usuarios.</p>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                className="mt-3"
+                                                onClick={() => setQueryParams({ ...queryParams })}
+                                            >
+                                                Reintentar
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )}
+                                {/* Vacío con conteo */}
+                                {!isLoading && !usersListIsPending && !usersListError && usersList?.items.length === 0 && (
                                     <tr>
                                         <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                                            No se encontraron usuarios.
+                                            0 usuarios — No se encontraron usuarios. Invite uno nuevo con el botón Invitar.
                                         </td>
                                     </tr>
                                 )}
