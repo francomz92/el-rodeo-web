@@ -9,7 +9,7 @@ import { Calendar } from "./ui/calendar";
 
 interface DateTimePickerProps {
     value: Date;
-    onChange?: (date: Date | undefined) => void;
+    onChange?: (date: Date) => void;
     placeholder?: string;
     disabled?: boolean;
     disableDate?: boolean;
@@ -59,6 +59,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 <Calendar
                     mode="single"
                     selected={value}
+                    defaultMonth={value}
                     onSelect={(date: Date) => {
                         if (date) {
                             // Preserve the time if already set

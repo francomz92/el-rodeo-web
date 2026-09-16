@@ -11,7 +11,7 @@ import { AUTH_ROLES } from "@auth/constants";
 
 interface EventModalContentProps {
     events?: ExtendedEventProps[];
-    date: Date | undefined;
+    date: Date;
     changeDate: (date: Date) => void;
     onClose: () => void;
     usersList: UserMeResponseSchema[];
@@ -33,7 +33,7 @@ const EventModalContent: React.FC<EventModalContentProps> = ({ events, date, cha
             <Card className="lg:flex lg:justify-around w-full h-full border-0 shadow-none ring-0 overflow-y-auto scrollbar-thin bg-inherit">
                 {/*INFO Cuando no hay eventos en la fecha seleccionada, se muestra el formulario de creación */}
                 {canWrite && !selectedEvent?.id && (
-                    <EventForm date={date!} changeDate={changeDate} onClose={onClose} usersList={usersList} />
+                    <EventForm date={date} changeDate={changeDate} onClose={onClose} usersList={usersList} />
                 )}
                 {/*INFO Cuando hay eventos pero no se selecciona uno en particular, se muestra la lista de eventos */}
                 {/*{Boolean(events?.length) && !selectedEvent?.id && <div className="w-full text-center">Lista de eventos</div>}*/}

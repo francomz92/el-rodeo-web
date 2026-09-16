@@ -20,11 +20,17 @@ export const ANIMAL_PROTOCOL_ENDPOINTS = {
 };
 
 export const ANIMAL_SCHEDULE_EVENT_ENDPOINTS = {
-    getScheduleEventList: "/cattle/schedule-events",
-    createScheduleEvent: "/cattle/schedule-events",
-    updateScheduleEvent: "/cattle/schedule-events/{eventId}",
-    deleteScheduleEvent: "/cattle/schedule-events/{eventId}",
+    getScheduleEventList: "/calendar/events",
+    createScheduleEvent: "/calendar/events",
+    updateScheduleEvent: "/calendar/events/{eventId}",
+    deleteScheduleEvent: "/calendar/events/{eventId}",
 };
+// export const ANIMAL_SCHEDULE_EVENT_ENDPOINTS = {
+//     getScheduleEventList: "/cattle/schedule-events",
+//     createScheduleEvent: "/cattle/schedule-events",
+//     updateScheduleEvent: "/cattle/schedule-events/{eventId}",
+//     deleteScheduleEvent: "/cattle/schedule-events/{eventId}",
+// };
 
 
 export const ANIMAL_STATUS = {

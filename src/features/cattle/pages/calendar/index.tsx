@@ -32,9 +32,8 @@ const Calendar: React.FC = () => {
     const { animalScheduleEventList: events, isPending, setQueryParams, queryParams } = useAnimalScheduleEventList();
     const { usersList, usersListIsPending } = useUserList();
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedEvents, setSelectedEvents] = useState<ExtendedEventProps[]>([]);
-    const [eventsData, setEventsData] = useState<EventDataInput[]>([]);
 
     useEffect(() => {
         if (!selectedDate) return;
@@ -42,17 +41,18 @@ const Calendar: React.FC = () => {
     }, [selectedDate]);
 
     useEffect(() => {
-        setEventsData(
-            events?.map((event) => ({
-                id: event.id,
-                title: event.title,
-                start: event.start,
-                end: event.end,
-                extendedProps: { ...event, style: COLOR_EVENT_TYPE[event.type as EventTypeColorOptions] ?? COLOR_EVENT_TYPE.default },
-                date: event.start,
-            })) || [],
-        );
-    }, [events]);
+        if (!controller.getDate() && !controller.view?.currentStart) return;
+        setSelectedDate(controller.getDate()!);
+    }, [controller.view?.currentStart.toLocaleDateString()])
+
+    const eventsData: EventDataInput[] = events?.map((event) => ({
+        id: event.id,
+        title: event.title,
+        start: event.start,
+        end: event.end,
+        extendedProps: { ...event, style: COLOR_EVENT_TYPE[event.type as EventTypeColorOptions] ?? COLOR_EVENT_TYPE.default },
+        date: event.start,
+    })) ?? []
 
     const handleModalDetails = (show: boolean, date: Date, events: ExtendedEventProps[]) => {
         setSelectedEvents(events);
@@ -61,10 +61,11 @@ const Calendar: React.FC = () => {
     };
 
     const onCloseModal = () => {
-        setSelectedDate(undefined);
+        // setSelectedDate(controller.getDate()!);
         setSelectedEvents([]);
         setShowModal(false);
     };
+    // console.log("eventsData: ", eventsData)
 
     return (
         <section className={`relative flex flex-col gap-2 justify-center w-full h-full px-4 ${showModal ? "items-start" : "items-center"}`}>
@@ -79,10 +80,10 @@ const Calendar: React.FC = () => {
             <div className="flex flex-col gap-8 lg:flex-row lg:gap-2 lg:justify-center lg:items-center w-full">
                 <FullCalendar
                     toolbarElements={{
-                        datePicker: (_) => {
+                        datePicker: () => {
                             return (
                                 <DateTimePicker
-                                    value={selectedDate ?? new Date()}
+                                    value={selectedDate}
                                     onChange={setSelectedDate}
                                     disableTime={true}
                                     className="border! border-border! p-2 text-sm rounded-lg! text-primary! bg-background! hover:cursor-pointer hover:bg-accent! active:bg-accent!"
@@ -90,7 +91,7 @@ const Calendar: React.FC = () => {
                             );
                         },
                     }}
-                    datesSet={(info) => setQueryParams({ start: info?.startStr, end: info?.endStr })}
+                    datesSet={(info) => {setQueryParams({ start: info?.startStr, end: info?.endStr })}}
                     events={eventsData}
                     controller={controller}
                     plugins={[themePlugin, dayGridPlugin, timeGridPlugin, listPlugin, multiMonthPlugin]}
@@ -180,6 +181,7 @@ const Calendar: React.FC = () => {
                         });
                     }}
                     eventClick={(info) => {
+                        info.jsEvent.stopPropagation()
                         const filteredEvents = eventsData?.filter((e) => {
                             return new Date(e.extendedProps.start).toISOString() === info.event.start?.toISOString();
                         });
@@ -248,17 +250,17 @@ const Calendar: React.FC = () => {
                                 );
                             },
                             dayLaneDidMount: (info) => {
-                                info.el.onclick = (e) => {
-                                    e.stopPropagation();
+                                info.el.onclick = () => {
                                     handleModalDetails(true, info.date, []);
                                 };
                             },
-                            eventDidMount: (info) => {
-                                info.el.onclick = (e) => {
-                                    e.stopPropagation();
-                                    const currentEvents = [{ ...(info.event.extendedProps as ExtendedEventProps), selected: true }];
-                                    handleModalDetails(true, new Date(info.event.startStr), currentEvents);
-                                };
+                            eventClick: (info) => {
+                                info.jsEvent.stopPropagation()
+                                const filteredEvent = eventsData?.find((ev) => {
+                                    return new Date(ev.extendedProps.start).toISOString() === info.event.start?.toISOString();
+                                });
+                                const currentEvents = [{ ...(filteredEvent?.extendedProps as ExtendedEventProps), selected: true }];
+                                handleModalDetails(true, new Date(info.event.startStr), currentEvents);
                             },
                         },
                         dayGridMonth: {

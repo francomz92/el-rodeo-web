@@ -13,7 +13,7 @@ const useAnimalScheduleEvent = () => {
     const createAnimalScheduleEventMutation = useMutation({
         mutationFn: (data: AnimalScheduleEventCreationType) => animalScheduleEventAPI.create(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
     });
 
@@ -21,17 +21,15 @@ const useAnimalScheduleEvent = () => {
         mutationFn: ({ eventId, data }: { eventId: string; data: AnimalScheduleEventUpdateType }) => {
             return animalScheduleEventAPI.update(eventId, data);
         },
-        onSuccess: (_, {eventId}) => {
-            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.lists() });
-            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.detail(eventId) });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
     });
 
     const deleteAnimalScheduleEventMutatio = useMutation({
         mutationFn: (eventId: string) => animalScheduleEventAPI.delete(eventId),
-        onSuccess: (_, eventId) => {
-            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.lists() });
-            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.detail(eventId) });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
         onError: (error: ErrorResponseType) => {
             if (error?.success === false && !Boolean(error?.error?.details?.length)) {
