@@ -28,3 +28,4 @@ dist-ssr
 .atl
 skills-lock.json
 .agents
+.codegraph
