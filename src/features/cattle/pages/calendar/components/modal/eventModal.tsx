@@ -1,7 +1,6 @@
 import { EyeOff } from "lucide-react";
 
 import { Card } from "@components/ui/card";
-// import type { AnimalScheduleEventResponseSchema } from "@cattle/schemas/output/animalScheduleEvent";
 import EventDetailCard from "./eventDetailCard";
 import EventForm from "./eventForm";
 import type { ExtendedEventProps } from "../../types";
@@ -24,7 +23,7 @@ const EventModalContent: React.FC<EventModalContentProps> = ({ events, date, cha
     const canWrite = user?.role !== AUTH_ROLES.VIEWER;
 
     return (
-        <div className="h-full w-[calc(100vw-2rem)] max-w-md shrink-0 lg:h-[76vh] lg:self-end border border-border rounded-xl shadow-md p-2 px-8 lg:px-1 pb-8 pt-8 lg:pt-4 bg-card">
+        <div className="h-full w-[calc(100vw-2rem)] max-w-md shrink-0 lg:h-[76vh] lg:self-end border border-border rounded-xl shadow-md p-2 px-8 lg:px-1 pb-8 pt-8 lg:pt-4 bg-sidebar">
             <div className="w-full text-center pb-2">
                 <button onClick={onClose}>
                     <EyeOff className="cursor-pointer" size={16} />
