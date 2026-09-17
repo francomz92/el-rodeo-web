@@ -1,4 +1,4 @@
-import ky, { type KyInstance, type ResponsePromise, type Options, type NormalizedOptions, isHTTPError } from "ky";
+import ky, { type KyInstance, type ResponsePromise, type NormalizedOptions } from "ky";
 
 import type { IHttpClient } from "../../../interfaces/http/clients";
 import { StandardErrorResponseSchema, type ErrorPayloadSchema, type ErrorResponseType } from "../../../schemas/output/responses.schemas";
@@ -60,7 +60,7 @@ const retryRequest = (client: KyInstance, url: string, options: NormalizedOption
     return client(url, { ...options, headers: { ...options.headers, [RETRY_FLAG]: "true" } });
 };
 
-const handleExpiredSession = async (client: KyInstance, originalRequest: Request, response: Response, options: NormalizedOptions) => {
+const handleExpiredSession = async (client: KyInstance, originalRequest: Request, options: NormalizedOptions) => {
     try {
         await refreshSession();
         const requests = pendingRequests.slice();
@@ -131,7 +131,7 @@ class KyHttpClient implements IHttpClient {
                                     });
                                 }
                                 isRefreshing = true;
-                                return handleExpiredSession(this.client, request, response, options).finally(() => {
+                                return handleExpiredSession(this.client, request, options).finally(() => {
                                     isRefreshing = false;
                                 });
                             }

@@ -1,6 +1,5 @@
 import type { RouteObject } from "react-router-dom"
 
-import { ProtectedRoute } from "@components/index"
 import { lazy } from "react"
 
 
@@ -10,17 +9,12 @@ const Calendar = lazy(() => import("../pages/calendar"))
 
 const privatedRoutes: RouteObject[] = [
     {
-        element: <ProtectedRoute />,
-        children: [
-            {
-                path: "cattle",
-                element: <Animals />
-            },
-            {
-                path: "calendar",
-                element: <Calendar />
-            }
-        ]
+        path: "cattle",
+        element: <Animals />
+    },
+    {
+        path: "calendar",
+        element: <Calendar />
     }
 ]
 

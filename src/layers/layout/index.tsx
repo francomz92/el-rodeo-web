@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+
 
 import { cn } from "@utils/cssStyle.lib";
 
@@ -7,7 +9,7 @@ import { useLayout } from "../hooks/layout.hook";
 import { useMediaQuery } from "../hooks/mediaQuery.hook";
 
 
-const DashboardLayout = ({ children }: React.PropsWithChildren) => {
+const Layout = () => {
     const { isCollapsed, toggleSidebar, setMobileOpen } = useLayout();
 
     let isDesktop = useMediaQuery("(min-width: 48rem)");
@@ -29,10 +31,12 @@ const DashboardLayout = ({ children }: React.PropsWithChildren) => {
                 )}
             >
                 <Header />
-                <main className="relative flex-1 overflow-x-hidden p-4 md:p-6">{children}</main>
+                <main className="relative flex-1 overflow-x-hidden p-4 md:p-6">
+                    <Outlet />
+                </main>
             </div>
         </div>
     );
 };
 
-export default DashboardLayout;
+export default Layout;

@@ -1,33 +1,29 @@
 import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { WaveSpinner } from ".";
 import { AUTH_ROLES } from "../../auth/constants";
 import { useProfile } from "../../auth/hooks/profile";
-import DashboardLayout from "../../../layers/dashboard";
 
 const ProtectedRoute = ({ roles = Object.values(AUTH_ROLES) }: { roles?: string[] }) => {
-    const { user, isLoading } = useProfile();
+    const { user, isLoading, error } = useProfile();
     const location = useLocation();
+    const queryClient = useQueryClient();
 
     if (isLoading) {
         return <WaveSpinner />;
     }
 
-    if (!user?.id) {
-        return (window.location.href = "/login");
+    if (!user?.id || error) {
+        queryClient.cancelQueries();
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    if (!roles.includes(user?.role)) {
+    if (!user.role || !roles.includes(user.role)) {
         return <Navigate to="/unauthorized" state={{ from: location }} />;
     }
 
-    const Dashboard = DashboardLayout
-
-    return (
-        <Dashboard>
-            <Outlet />
-        </Dashboard>
-    )
+    return <Outlet />;
 };
 
 export default ProtectedRoute;
