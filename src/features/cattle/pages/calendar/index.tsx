@@ -16,7 +16,9 @@ import "@fullcalendar/react/themes/forma/palettes/green.css"; // YOUR THEME'S PA
 import "@assets/styles/calendar.css";
 import { DateTimePicker, WaveSpinner } from "@components/index";
 import { Badge } from "@components/ui/badge";
+import { Button } from "@components/ui/button";
 import { capitalize } from "@shared/utils/strings.utils";
+import type { ErrorResponseType } from "@shared/schemas/output/responses.schemas";
 import { useUserList } from "@auth/hooks/user";
 import { useAnimalScheduleEventList } from "@cattle/hooks/animalScheduleEvent";
 
@@ -29,7 +31,7 @@ import useThemeSchema from "../../../../layers/hooks/useThemeSchema.hook";
 const Calendar: React.FC = () => {
     const { isDark } = useThemeSchema();
     const controller = useCalendarController();
-    const { animalScheduleEventList: events, isPending, setQueryParams, queryParams } = useAnimalScheduleEventList();
+    const { animalScheduleEventList: events, isPending, error, setQueryParams, queryParams } = useAnimalScheduleEventList();
     const { usersList, usersListIsPending } = useUserList();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -44,6 +46,12 @@ const Calendar: React.FC = () => {
         if (!controller.getDate() && !controller.view?.currentStart) return;
         setSelectedDate(controller.getDate()!);
     }, [controller.view?.currentStart.toLocaleDateString()])
+
+    const calendarError = error as ErrorResponseType | null;
+    const calendarErrorMessage =
+        calendarError?.success === false && calendarError?.error?.message
+            ? calendarError.error.message
+            : "No se pudieron cargar los eventos del calendario.";
 
     const eventsData: EventDataInput[] = events?.map((event) => ({
         id: event.id,
@@ -78,6 +86,24 @@ const Calendar: React.FC = () => {
                 />
             </div>
             <div className="flex flex-col gap-8 lg:flex-row lg:gap-2 lg:justify-center lg:items-center w-full">
+                {calendarError && (
+                    <div className="lg:w-8/10 w-full rounded-xl border border-border bg-card p-6 text-center">
+                        <p className="font-medium text-foreground">{calendarErrorMessage}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            Verifique que su sesión tenga un tenant asignado e intente nuevamente.
+                        </p>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="mt-4"
+                            onClick={() => setQueryParams({ ...queryParams })}
+                        >
+                            Reintentar
+                        </Button>
+                    </div>
+                )}
+                {!calendarError && (
                 <FullCalendar
                     toolbarElements={{
                         datePicker: () => {
@@ -297,6 +323,7 @@ const Calendar: React.FC = () => {
                         },
                     }}
                 />
+                )}
                 <EventModal
                     show={showModal}
                     date={selectedDate}

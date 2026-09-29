@@ -15,6 +15,11 @@ const useAnimalScheduleEvent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
+        onError: (error: ErrorResponseType) => {
+            if (error?.success === false && !Boolean(error?.error?.details?.length)) {
+                toast.error(error?.error?.message!);
+            }
+        },
     });
 
     const updateAnimalScheduleEventMutation = useMutation({
@@ -23,6 +28,11 @@ const useAnimalScheduleEvent = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
+        },
+        onError: (error: ErrorResponseType) => {
+            if (error?.success === false && !Boolean(error?.error?.details?.length)) {
+                toast.error(error?.error?.message!);
+            }
         },
     });
 
