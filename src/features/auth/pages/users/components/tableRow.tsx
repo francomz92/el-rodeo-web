@@ -10,16 +10,12 @@ interface UserDetailsProps {
     authenticatedUser: UserMeResponseSchema;
     user: UserMeResponseSchema;
     onSelect: (user: UserMeResponseSchema) => void;
-    deleteUser: (userId: string) => void;
+    onRequestDelete: (user: UserMeResponseSchema) => void;
     isDeleting: boolean;
     roleOptions: Record<string, string>;
 }
 
-const TableRow: React.FC<UserDetailsProps> = ({ authenticatedUser, user, onSelect, deleteUser, isDeleting, roleOptions }) => {
-    const onDelete = (userId: string) => {
-        deleteUser(userId);
-    };
-
+const TableRow: React.FC<UserDetailsProps> = ({ authenticatedUser, user, onSelect, onRequestDelete, isDeleting, roleOptions }) => {
     return (
         <tr
             key={user.id}
@@ -68,8 +64,8 @@ const TableRow: React.FC<UserDetailsProps> = ({ authenticatedUser, user, onSelec
                         </button>
                         <button
                             type="button"
-                            title="Eliminar"
-                            onClick={() => onDelete(user.id)}
+                            title="Dar de baja"
+                            onClick={() => onRequestDelete(user)}
                             className="
                             rounded-full
                             p-2

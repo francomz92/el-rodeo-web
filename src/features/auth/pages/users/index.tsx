@@ -4,7 +4,7 @@ import { SelectInput, SearchInput, WaveSpinner, ListPagination } from "@componen
 import { Button } from "@components/ui/button";
 
 import { useDebounce } from "@hooks/index";
-import { UserTableRow, UserModal } from "./components";
+import { UserTableRow, UserModal, OffboardingDialog } from "./components";
 import { SELECT_ROLE_OPTIONS } from "../../constants";
 import { useUser, useUserList } from "../../hooks/user";
 import type { UserMeResponseSchema } from "../../schemas/output/user";
@@ -20,6 +20,7 @@ const Users: React.FC = () => {
     const { usersList, queryParams, setQueryParams, usersListError, usersListIsPending } = useUserList();
     const { delete: deleteUser, isDeleting } = useUser();
     const [selectedUser, setSelectedUser] = useState<UserMeResponseSchema | null>(null);
+    const [userToOffboard, setUserToOffboard] = useState<UserMeResponseSchema | null>(null);
     const [searchTerm, setSearchTerm] = useState<string | null>(queryParams.search);
     const [showInviteModal, setShowInviteModal] = useState(false);
     const debouncedSearch = useDebounce(searchTerm, 300);
@@ -118,7 +119,7 @@ const Users: React.FC = () => {
                                         authenticatedUser={authenitcatedUser!}
                                         user={user}
                                         onSelect={selectUser}
-                                        deleteUser={deleteUser}
+                                        onRequestDelete={setUserToOffboard}
                                         isDeleting={isDeleting}
                                         roleOptions={SELECT_ROLE_OPTIONS}
                                     />
@@ -168,6 +169,15 @@ const Users: React.FC = () => {
                 onClose={selectUser}
                 roleOptions={ROLES_TO_ASIGN}
                 user={selectedUser!}
+            />
+            <OffboardingDialog
+                user={userToOffboard}
+                isDeleting={isDeleting}
+                onConfirm={(userId) => {
+                    deleteUser(userId);
+                    setUserToOffboard(null);
+                }}
+                onClose={() => setUserToOffboard(null)}
             />
             <InvitationModal
                 show={showInviteModal}
