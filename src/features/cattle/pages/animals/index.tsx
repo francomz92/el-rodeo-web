@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { SelectInput, SearchInput, WaveSpinner, ListPagination } from "@components/index";
+import { SelectInput, SearchInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
@@ -52,8 +52,6 @@ const Animals: React.FC = () => {
         setQueryParams(prev => ({...prev, breed: breedSearchDebounce}))
     }, [breedSearchDebounce])
 
-
-    const totalPages = Math.ceil((animalList?.total ?? 0) / 10);
 
     const selectAnimal = (animal: AnimalResponseSchema | null) => {
         setSelectedAnimal(animal)

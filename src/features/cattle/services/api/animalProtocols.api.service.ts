@@ -1,7 +1,7 @@
 import type { IHttpClient } from "../../../shared/interfaces/http/clients";
 import { formatString } from "../../../shared/utils/strings.utils";
 import { ANIMAL_PROTOCOL_ENDPOINTS } from "../../constants";
-import type { AnimalProtocolQueryParamsType, AnimalProtocolUpdateType } from "../../schemas/input/animalProtocol.schema";
+import type { AnimalProtocolUpdateType } from "../../schemas/input/animalProtocol.schema";
 import type { AnimalProtocolResponseSchema } from "../../schemas/output/animalProtocol";
 
 class AnimalProtocolAPI {

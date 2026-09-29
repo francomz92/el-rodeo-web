@@ -1,4 +1,4 @@
-import { useForm, type UseFormProps } from "react-hook-form";
+import { useForm, type Resolver, type UseFormProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -17,7 +17,7 @@ const useFormHook = <T extends z.ZodObject<{ [key: string]: z.ZodType }>>(
         reset,
         setError,
     } = useForm({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema) as unknown as Resolver<z.infer<T>, any, z.infer<T>>,
         ...options,
     });
 
