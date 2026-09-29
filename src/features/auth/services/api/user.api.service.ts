@@ -2,7 +2,6 @@ import { USER_ENDPOINTS } from "../../constants";
 import type { IHttpClient } from "../../../shared/interfaces/http/clients";
 import { formatString } from "../../../shared/utils/strings.utils";
 import type {
-    UserDeleteDataResponseSchema,
     UserExportDataResponseSchema,
     UserListResponseSchema,
     UserMeResponseSchema,
@@ -52,10 +51,6 @@ class UserAPI {
 
     exportData(): Promise<UserExportDataResponseSchema> {
         return this.httpClient.get(USER_ENDPOINTS.exportData);
-    }
-
-    deleteData(): Promise<UserDeleteDataResponseSchema> {
-        return this.httpClient.delete(USER_ENDPOINTS.deleteUserData);
     }
 
     getMyTenant(): Promise<UserMeTenantResponseSchema> {

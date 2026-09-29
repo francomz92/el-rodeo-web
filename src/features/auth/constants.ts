@@ -16,7 +16,6 @@ export const USER_ENDPOINTS = {
     getUser: "/auth/users/{userId}",
     deleteUser: "/auth/users/{userId}",
     exportData: "/auth/users/me/export",
-    deleteUserData: "/auth/users/me/data",
     getMyTenant: "/auth/users/me/tenant",
 }
 

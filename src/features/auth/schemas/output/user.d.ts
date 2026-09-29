@@ -46,11 +46,6 @@ export type UserExportDataResponseSchema = {
     audit_log: string[];
 };
 
-export type UserDeleteDataResponseSchema = {
-    message: string;
-    status: string;
-};
-
 export type UserMeTenantResponseSchema = {
     id: string;
     name: string;
