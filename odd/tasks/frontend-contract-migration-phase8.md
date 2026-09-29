@@ -1,6 +1,6 @@
 # Feature: Frontend contract migration — Phase 8 backend contract changes
 
-Status: in_progress
+Status: done
 
 ## Objective
 
@@ -56,4 +56,44 @@ Migrate `el-rodeo-web` for the four approved backend contract changes documented
 
 ## Evidence
 
-- Work-unit commits per task on `feat/frontend-contract-migration-phase8`.
+- Work-unit commits per task on `feat/frontend-contract-migration-phase8`:
+  - `8ff3b09 chore(auth): remove retired self-service DELETE /users/me/data wiring` — task 1
+  - `d2c64f6 feat(users): confirm admin offboarding and explain unlinked attribution` — task 2
+  - `a0c8e5d feat(calendar): surface tenantless 403 permission_error instead of empty view` — task 3
+- Task 4 (webhook / purchases / market N/A verification) produced no code change.
+
+## Results
+
+- `pnpm lint` (oxlint): 0 errors, 119 pre-existing warnings (no new warnings from this migration;
+  two warnings removed with the deleted deleteData mutation).
+- `pnpm build` (tsc -b): fails as on `main` with the SAME 4 pre-existing errors
+  (`cattle/pages/animals/index.tsx` unused ListPagination/totalPages,
+  `cattle/services/api/animalProtocols.api.service.ts` unused type import,
+  `shared/hooks/form.hook.ts` zod resolver typing). Migration adds no new tsc errors.
+- Tests: the repository has no test runner (no test script, no test deps).
+
+## Changed paths
+
+- `src/features/auth/constants.ts` (removed deleteUserData endpoint)
+- `src/features/auth/services/api/user.api.service.ts` (removed deleteData method)
+- `src/features/auth/hooks/user/userData.hook.ts` (removed deleteData mutation)
+- `src/features/auth/schemas/output/user.d.ts` (removed UserDeleteDataResponseSchema)
+- `src/features/auth/pages/users/components/tableRow.tsx` (trash opens confirmation; copy "Dar de baja")
+- `src/features/auth/pages/users/components/modal/offboardingDialog.tsx` (new offboarding confirmation dialog)
+- `src/features/auth/pages/users/components/index.ts` (export OffboardingDialog)
+- `src/features/auth/pages/users/index.tsx` (offboarding state + dialog wiring)
+- `src/features/cattle/pages/calendar/index.tsx` (403 permission_error error surface + retry)
+- `src/features/cattle/hooks/animalScheduleEvent/animalScheduleEvent.hook.ts` (create/update onError toasts)
+
+## Remaining rollout risks
+
+- Market `order_by` enums: no market UI exists in this repo yet; any future `/buyers`/`/sales`
+  screens must use buyers `name|created_at` and sales `sale_date|price|weight|created_at`,
+  default `created_at`, and must not send `ALLOWED_ORDER_BY` (already absent). The shared
+  `queryParams.shcemas.ts` `order_by=id` default only feeds `/cattle/*` and `/finance/*`, which
+  are outside the notes.
+- Purchases nullable identity: no purchase list/detail consumer exists yet; a future purchases
+  feature must treat `user_id`/`user_name` as nullable with a neutral fallback.
+- Webhooks: no webhook update UI exists; any future webhook form must omit/send null `url` to
+  preserve the stored URL and never rely on a literal `"None"`.
+- Pre-existing tsc errors block `pnpm build` until fixed (unrelated to this migration).
