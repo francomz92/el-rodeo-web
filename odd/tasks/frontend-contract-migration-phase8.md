@@ -64,12 +64,11 @@ Migrate `el-rodeo-web` for the four approved backend contract changes documented
 
 ## Results
 
-- `pnpm lint` (oxlint): 0 errors, 119 pre-existing warnings (no new warnings from this migration;
-  two warnings removed with the deleted deleteData mutation).
-- `pnpm build` (tsc -b): fails as on `main` with the SAME 4 pre-existing errors
-  (`cattle/pages/animals/index.tsx` unused ListPagination/totalPages,
-  `cattle/services/api/animalProtocols.api.service.ts` unused type import,
-  `shared/hooks/form.hook.ts` zod resolver typing). Migration adds no new tsc errors.
+- `pnpm lint` (oxlint): 0 errors, 116 pre-existing warnings (no new warnings from this migration).
+- `pnpm build` (tsc -b && vite build): PASSES. The 4 pre-existing tsc errors were fixed in
+  `0481a18 fix(types): clear pre-existing tsc build errors` (unused ListPagination/totalPages in
+  animals/index.tsx, unused type import in animalProtocols.api.service.ts, and the generic
+  zodResolver typing in shared/hooks/form.hook.ts cast to Resolver<z.infer<T>>).
 - Tests: the repository has no test runner (no test script, no test deps).
 
 ## Changed paths
