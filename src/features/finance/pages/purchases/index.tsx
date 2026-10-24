@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { SelectInput, SearchInput, WaveSpinner } from "@components/index";
+import { SelectInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
-import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
-import type { AnimalTypeResponseSchema } from "@cattle/schemas/output/animalTypes";
 
-import { SupplyModal, CreationModal, SupplyTableRow } from "./components";
+import { PurchaseModal, PurchaseTableRow, CreationModal } from "./components";
 import CreateButton from "./components/createButton";
-import { useSupply, useSupplyList } from "@finance/hooks/supply";
-import type { SupplyResponseSchema } from "@finance/schemas/output/supply";
-import useSupplyTypeList from "@finance/hooks/supplyType/supplyTypeList.hook";
+import { usePurchase, usePurchaseList } from "@finance/hooks/purchases";
+import { useSupplyList } from "@finance/hooks/supply";
+import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
 import { UNIT_OF_MEASUREMENT } from "@finance/constants";
 
 const Modal = {
@@ -21,17 +19,13 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 
 const Purchases: React.FC = () => {
     const { user } = useProfile()
-    const { supplyList, setQueryParams, isError, isPending } = useSupplyList();
-    const { delete: deleteSupply, isDeleting } = useSupply();
-    const { supplyTypeList, isPending: typesIsPending } = useSupplyTypeList()
-    const [selectedType, setSelectedType] = useState<AnimalTypeResponseSchema | undefined>(undefined)
-    const [nameSearched, setNameSearched] = useState<string | undefined>(undefined)
-    const [animalTypes, setAnimalTypes] = useState<Record<string, string>>({})
-    // Modales statues
-    const [selectedSupply, setSelectedSupply] = useState<SupplyResponseSchema | null>(null);
+    const { purchaseList, setQueryParams, isError, isPending } = usePurchaseList();
+    const { delete: deletePurchase, isDeleting } = usePurchase();
+    const { supplyList, isPending: suppliesIsPending } = useSupplyList();
+    const [currentSupplyName, setCurrentSupplyName] = useState<string | undefined>(undefined)
+    const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
+    const [selectedPurchase, setSelectedPurchase] = useState<PurchaseResponseSchema | null>(null);
     const [displayModal, setDisplayModal] = useState<ModalType | null>(null)
-
-    const nameSearchDebounce = useDebounce(nameSearched, 300)
 
     const unitOfMeasurementOptions: Record<string, string> = {};
     Object.values(UNIT_OF_MEASUREMENT).forEach(unit => {
@@ -39,33 +33,35 @@ const Purchases: React.FC = () => {
     })
 
     useEffect(() => {
-        if (supplyTypeList?.length) {
-            let types: Record<string, string> = {}
-            supplyTypeList.forEach(t => { types[t.name] = t.id })
-            setAnimalTypes({...types})
+        if (supplyList?.length) {
+            let options: Record<string, string> = {}
+            supplyList.forEach(s => { options[s.name] = s.id })
+            setSupplyOptions({...options})
         }
-    }, [supplyTypeList])
+    }, [supplyList])
 
-    useEffect(() => {
-        setQueryParams(prev => ({...prev, name: nameSearchDebounce}))
-    }, [nameSearchDebounce])
+    const updateSupply = (value: string | undefined) => {
+        if (value === "Todos") {
+            value = ""
+        }
+        setCurrentSupplyName(supplyList?.find(s => s.id === value)?.name)
+        setQueryParams(prev => ({...prev, supply_id: value}))
+    }
 
+    const updateUnitOfMeasurement = (value: string | undefined) => {
+        if (value === "Todos") {
+            value = ""
+        }
+        setQueryParams(prev => ({...prev, unit_of_measurement: value}))
+    }
 
-    const selectSupply = (supply: SupplyResponseSchema | null) => {
-        setSelectedSupply(supply)
+    const selectPurchase = (purchase: PurchaseResponseSchema | null) => {
+        setSelectedPurchase(purchase)
     };
 
     const closeModal = () => {
         setDisplayModal(null)
     };
-
-    const updateType = (value: string | undefined) => {
-        if (value === "Todos") {
-            value = ""
-        }
-        setSelectedType(supplyTypeList?.find(t => t.id === value))
-        setQueryParams(prev => ({...prev, type_id: value}))
-    }
 
     return (
         <section>
@@ -74,15 +70,14 @@ const Purchases: React.FC = () => {
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
                     <SelectInput
-                        defaultValue={selectedType?.name ?? "Todos"}
-                        onValueChange={updateType}
-                        options={{Todos: "", ...animalTypes}}
+                        defaultValue={currentSupplyName ?? "Todos"}
+                        onValueChange={updateSupply}
+                        options={{Todos: "", ...supplyOptions}}
                     />
-                    <SearchInput
-                        value={nameSearched ?? ""}
-                        placeholder="Nombre..."
-                        onValueChange={setNameSearched}
-                        className="bg-background border-input shadow-none"
+                    <SelectInput
+                        defaultValue="Todos"
+                        onValueChange={updateUnitOfMeasurement}
+                        options={{Todos: "", ...unitOfMeasurementOptions}}
                     />
                     <CreateButton
                         userRole={user?.role}
@@ -97,21 +92,22 @@ const Purchases: React.FC = () => {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-border bg-muted/60 text-center">
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nombre</th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tipo</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Insumo</th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Cantidad</th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Cantidad crítica</th>
-                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Descripción</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Precio total</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Precio unitario</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Registrada por</th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* Cargando: esqueletos por fila */}
-                                {(isPending || typesIsPending) && (
+                                {/* Cargando: esquelos por fila */}
+                                {(isPending || suppliesIsPending) && (
                                     <>
                                         {[0, 1, 2].map((row) => (
                                             <tr key={`skeleton-${row}`} className="border-b border-border last:border-0">
-                                                <td colSpan={6} className="px-4 py-3">
+                                                <td colSpan={7} className="px-4 py-3">
                                                     {row === 0 && <span className="sr-only">Cargando...</span>}
                                                     <div aria-hidden="true" className="h-5 animate-pulse rounded-md bg-muted" />
                                                 </td>
@@ -119,23 +115,23 @@ const Purchases: React.FC = () => {
                                         ))}
                                     </>
                                 )}
-                                {/* Si existen insumos */}
-                                {!isPending && !typesIsPending && supplyList?.map((supply) => (
-                                    <SupplyTableRow
-                                        key={supply.id}
-                                        supply={supply}
-                                        select={() => selectSupply(supply)}
-                                        deleteSupply={() => deleteSupply(supply.id)}
+                                {/* Si existen compras */}
+                                {!isPending && !suppliesIsPending && purchaseList?.map((purchase) => (
+                                    <PurchaseTableRow
+                                        key={purchase.id}
+                                        purchase={purchase}
+                                        userRole={user?.role}
+                                        select={() => selectPurchase(purchase)}
+                                        deletePurchase={() => deletePurchase(purchase.id)}
                                         isDeleting={isDeleting}
-                                        showSupplyModal={() => setDisplayModal(Modal.DETAILS)}
-                                        // showProtocolsModal={() => setDisplayModal(Modal.PROTOCOLS)}
+                                        showPurchaseModal={() => setDisplayModal(Modal.DETAILS)}
                                     />
                                 ))}
                                 {/* Error con reintento */}
-                                {!isPending && !typesIsPending && isError && (
+                                {!isPending && !suppliesIsPending && isError && (
                                     <tr>
-                                        <td colSpan={6} className="px-4 py-10 text-center">
-                                            <p className="font-medium text-destructive">No se pudieron cargar los insumos.</p>
+                                        <td colSpan={7} className="px-4 py-10 text-center">
+                                            <p className="font-medium text-destructive">No se pudieron cargar las compras.</p>
                                             <Button
                                                 type="button"
                                                 variant="outline"
@@ -149,10 +145,10 @@ const Purchases: React.FC = () => {
                                     </tr>
                                 )}
                                 {/* Vacío con conteo */}
-                                {!isPending && !typesIsPending && !isError && !supplyList?.length && (
+                                {!isPending && !suppliesIsPending && !isError && !purchaseList?.length && (
                                     <tr>
-                                        <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
-                                            0 insumos — No se encontraron insumos. Registre uno nuevo con el botón Nuevo.
+                                        <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                                            0 compras — No se encontraron compras. Registre una nueva con el botón Nuevo.
                                         </td>
                                     </tr>
                                 )}
@@ -164,15 +160,13 @@ const Purchases: React.FC = () => {
             <CreationModal
                 show={displayModal === Modal.CREATE}
                 onClose={closeModal}
-                typeOptions={animalTypes}
+                supplyOptions={supplyOptions}
                 unitOfMeasurementOptions={unitOfMeasurementOptions}
             />
-            <SupplyModal
+            <PurchaseModal
                 show={displayModal === Modal.DETAILS}
-                supply={selectedSupply!}
-                typeOptions={animalTypes}
-                unitOfMeasurementOptions={unitOfMeasurementOptions}
-                onClose={() => selectSupply(null)}
+                purchase={selectedPurchase!}
+                onClose={() => selectPurchase(null)}
                 closeModal={closeModal}
             />
         </section>

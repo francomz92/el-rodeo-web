@@ -11,13 +11,13 @@ export const PurchaseCreationValidationSchema = z.object({
     unit_of_measurement: z.string(),
 });
 
-export const PurchaseListQueryParamsSchema = z.object({
+export const PurchaseListQueryParamsSchema = {
     id: parseAsString,
     purchase_date: parseAsIsoDate,
     unit_of_measurement: parseAsString,
     supply_id: parseAsString,
     ...baseQueryParamsFilter,
-});
+};
 
 
 export type PurchaseCreationType = z.infer<typeof PurchaseCreationValidationSchema>;

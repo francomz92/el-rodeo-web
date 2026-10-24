@@ -12,6 +12,7 @@ import {
     SquareUser,
     Library,
     Store,
+    ShoppingCart,
 } from "lucide-react";
 
 import type { NavigationSection } from "../schemas/navigation";
@@ -26,6 +27,7 @@ export const navigationSections: NavigationSection[] = [
             { title: "Usuarios", href: "/users", icon: Users },
             { title: "Ganado", href: "/cattle", icon: PawPrint },
             { title: "Insumos", href: "/supplies", icon: Vegan },
+            { title: "Compras", href: "/purchases", icon: ShoppingCart },
             { title: "Clientes", href: "/buyers", icon: SquareUser },
         ],
     },

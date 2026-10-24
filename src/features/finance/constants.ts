@@ -13,6 +13,13 @@ export const SUPPLY_TYPE_ENDPOINTS = {
     deleteSupply: "/finance/animal-supply-types/{supplyId}",
 };
 
+export const PURCHASE_ENDPOINTS = {
+    getPurchase: "/finance/purchases/{purchaseId}",
+    getPurchaseList: "/finance/purchases",
+    createPurchase: "/finance/purchases",
+    deletePurchase: "/finance/purchases/{purchaseId}",
+};
+
 export const UNIT_OF_MEASUREMENT = {
     KILOGRAMS: "kg",
     GRAMS: "gr",

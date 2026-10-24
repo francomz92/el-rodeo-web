@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { EyeClosed } from "lucide-react";
 
 import { useFormHook } from "@hooks/index";
@@ -7,39 +8,40 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@components/ui/card";
 import { mapErrors } from "@shared/utils/forms.utils";
-import { useState } from "react";
-import { useSupply } from "@finance/hooks/supply";
-import { SupplyCreationValidationSchema, type SupplyCreationType } from "@finance/schemas/input/supply.schemas";
+import { usePurchase } from "@finance/hooks/purchases";
+import { PurchaseCreationValidationSchema, type PurchaseCreationType } from "@finance/schemas/input/purchase.schemas";
 import { FIELD_LABEL_STATE_STYLES, inputStyle } from "@shared/constants/styles";
 
 interface CreationModalContentProps {
     onClose: () => void;
-    typeOptions: Record<string, string>;
+    supplyOptions: Record<string, string>;
     unitOfMeasurementOptions: Record<string, string>;
 }
 
-const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, typeOptions, unitOfMeasurementOptions }) => {
-    const { create, isCreating } = useSupply();
-    const [currentTypeName, setCurrentTypeName] = useState("");
+const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, supplyOptions, unitOfMeasurementOptions }) => {
+    const { create, isCreating } = usePurchase();
+    const [currentSupplyName, setCurrentSupplyName] = useState("");
     const [currentUnitOfMeasurement, setCurrentUnitOfMeasurement] = useState("");
 
-    const form = useFormHook(SupplyCreationValidationSchema, { mode: "onChange", defaultValues: { amount: 1, critical_amount: 1 } });
+    const form = useFormHook(PurchaseCreationValidationSchema, { mode: "onChange", defaultValues: { purchase_date: "" } });
 
     const fieldLabelStyle = FIELD_LABEL_STATE_STYLES.SEMIBOLD;
 
     const onSubmit = (data: Record<string, any>) => {
-        create(data as SupplyCreationType, {
-            onSuccess: () => form.reset(),
+        create(data as PurchaseCreationType, {
+            onSuccess: () => {
+                form.reset();
+                onClose();
+            },
             onError: (error) => mapErrors({ form, error }),
         });
-        onClose();
     };
 
-    const onSelectType = (typeId: string) => {
-        form.setValue("type_id", typeId, { shouldValidate: true });
-        for (const [name, id] of Object.entries(typeOptions)) {
-            if (id === typeId) {
-                setCurrentTypeName(name);
+    const onSelectSupply = (supplyId: string) => {
+        form.setValue("supply_id", supplyId, { shouldValidate: true });
+        for (const [name, id] of Object.entries(supplyOptions)) {
+            if (id === supplyId) {
+                setCurrentSupplyName(name);
             }
         }
     };
@@ -48,6 +50,16 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
         form.setValue("unit_of_measurement", unit, { shouldValidate: true });
         setCurrentUnitOfMeasurement(unit);
     };
+
+    const numberInput = (name: "amount" | "price" | "unit_price") => ({
+        ...form.register(name, {
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                form.setValue(name, Number(e.target.value));
+            },
+            valueAsNumber: true,
+        }),
+    });
 
     return (
         <div className="absolute inset-0 grid place-content-center bg-background/80">
@@ -61,28 +73,19 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                 <CardContent className="py-4 px-0">
                     <div className="flex sm:flex-row flex-col gap-6">
                         <div className="sm:min-w-md min-w-sm sm:order-first order-last px-8">
-                            <form id="create-animal-form" className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+                            <form id="create-purchase-form" className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
                                 <div className="flex flex-col gap-4">
                                     <Field className="gap-1.5">
-                                        <FieldLabel htmlFor="type" className={fieldLabelStyle}>
-                                            Tipo
+                                        <FieldLabel htmlFor="supply_id" className={fieldLabelStyle}>
+                                            Insumo
                                         </FieldLabel>
-                                        <SelectInput defaultValue={currentTypeName} onValueChange={onSelectType} options={typeOptions} />
+                                        <SelectInput defaultValue={currentSupplyName} onValueChange={onSelectSupply} options={supplyOptions} />
                                         <FieldError
                                             errors={
-                                                Boolean(form.errors?.type_id)
-                                                    ? [{ message: form.errors?.type_id?.message }]
+                                                Boolean(form.errors?.supply_id)
+                                                    ? [{ message: form.errors?.supply_id?.message }]
                                                     : undefined
                                             }
-                                        />
-                                    </Field>
-                                    <Field className="gap-1.5">
-                                        <FieldLabel htmlFor="name" className={fieldLabelStyle}>
-                                            Nombre
-                                        </FieldLabel>
-                                        <Input id="name" type="text" className={inputStyle} {...form.register("name")} />
-                                        <FieldError
-                                            errors={Boolean(form.errors?.name) ? [{ message: form.errors?.name?.message }] : undefined}
                                         />
                                     </Field>
                                     <Field className="gap-1.5">
@@ -93,38 +96,12 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                             id="amount"
                                             type="text"
                                             className={inputStyle}
-                                            {...form.register("amount", {
-                                                onChange: (e) => {
-                                                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                                                    form.setValue("amount", e.target.value);
-                                                },
-                                                valueAsNumber: true,
-                                            })}
-                                        />
-                                        <FieldError
-                                            errors={Boolean(form.errors?.amount) ? [{ message: form.errors?.amount?.message }] : undefined}
-                                        />
-                                    </Field>
-                                    <Field className="gap-1.5">
-                                        <FieldLabel htmlFor="critical_amount" className={fieldLabelStyle}>
-                                            Cantidad crítica
-                                        </FieldLabel>
-                                        <Input
-                                            id="critical_amount"
-                                            type="text"
-                                            className={inputStyle}
-                                            {...form.register("critical_amount", {
-                                                onChange: (e) => {
-                                                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                                                    form.setValue("critical_amount", e.target.value);
-                                                },
-                                                valueAsNumber: true,
-                                            })}
+                                            {...numberInput("amount")}
                                         />
                                         <FieldError
                                             errors={
-                                                Boolean(form.errors?.critical_amount)
-                                                    ? [{ message: form.errors?.critical_amount?.message }]
+                                                Boolean(form.errors?.amount)
+                                                    ? [{ message: form.errors?.amount?.message }]
                                                     : undefined
                                             }
                                         />
@@ -147,14 +124,55 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         />
                                     </Field>
                                     <Field className="gap-1.5">
-                                        <FieldLabel htmlFor="description" className={fieldLabelStyle}>
-                                            Descripción
+                                        <FieldLabel htmlFor="price" className={fieldLabelStyle}>
+                                            Precio total
                                         </FieldLabel>
-                                        <Input id="description" type="text" className={inputStyle} {...form.register("description")} />
+                                        <Input
+                                            id="price"
+                                            type="text"
+                                            className={inputStyle}
+                                            {...numberInput("price")}
+                                        />
                                         <FieldError
                                             errors={
-                                                Boolean(form.errors?.description)
-                                                    ? [{ message: form.errors?.description?.message }]
+                                                Boolean(form.errors?.price)
+                                                    ? [{ message: form.errors?.price?.message }]
+                                                    : undefined
+                                            }
+                                        />
+                                    </Field>
+                                    <Field className="gap-1.5">
+                                        <FieldLabel htmlFor="unit_price" className={fieldLabelStyle}>
+                                            Precio por unidad
+                                        </FieldLabel>
+                                        <Input
+                                            id="unit_price"
+                                            type="text"
+                                            className={inputStyle}
+                                            {...numberInput("unit_price")}
+                                        />
+                                        <FieldError
+                                            errors={
+                                                Boolean(form.errors?.unit_price)
+                                                    ? [{ message: form.errors?.unit_price?.message }]
+                                                    : undefined
+                                            }
+                                        />
+                                    </Field>
+                                    <Field className="gap-1.5">
+                                        <FieldLabel htmlFor="purchase_date" className={fieldLabelStyle}>
+                                            Fecha de compra
+                                        </FieldLabel>
+                                        <Input
+                                            id="purchase_date"
+                                            type="date"
+                                            className={inputStyle}
+                                            {...form.register("purchase_date")}
+                                        />
+                                        <FieldError
+                                            errors={
+                                                Boolean(form.errors?.purchase_date)
+                                                    ? [{ message: form.errors?.purchase_date?.message }]
                                                     : undefined
                                             }
                                         />
@@ -170,7 +188,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                             className="rounded-lg cursor-pointer h-10"
                             type="submit"
                             disabled={isCreating || form.isSubmitting || !form.isValid}
-                            form="create-animal-form"
+                            form="create-purchase-form"
                         >
                             Crear registro
                         </Button>
@@ -185,9 +203,9 @@ interface CreationModalProps extends CreationModalContentProps {
     show: boolean;
 }
 
-const CreationModal: React.FC<CreationModalProps> = ({ show, onClose, typeOptions, unitOfMeasurementOptions }) => {
+const CreationModal: React.FC<CreationModalProps> = ({ show, onClose, supplyOptions, unitOfMeasurementOptions }) => {
     if (!show) return null;
-    return <CreationModalContent onClose={onClose} typeOptions={typeOptions} unitOfMeasurementOptions={unitOfMeasurementOptions} />;
+    return <CreationModalContent onClose={onClose} supplyOptions={supplyOptions} unitOfMeasurementOptions={unitOfMeasurementOptions} />;
 };
 
 export default CreationModal;
