@@ -167,6 +167,7 @@ const Users: React.FC = () => {
             <UserModal
                 show={Boolean(selectedUser)}
                 onClose={selectUser}
+                userRole={authenitcatedUser?.role}
                 roleOptions={ROLES_TO_ASIGN}
                 user={selectedUser!}
             />

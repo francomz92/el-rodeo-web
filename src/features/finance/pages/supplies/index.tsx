@@ -124,6 +124,7 @@ const Supplies: React.FC = () => {
                                     <SupplyTableRow
                                         key={supply.id}
                                         supply={supply}
+                                        userRole={user?.role}
                                         select={() => selectSupply(supply)}
                                         deleteSupply={() => deleteSupply(supply.id)}
                                         isDeleting={isDeleting}

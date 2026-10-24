@@ -1,20 +1,27 @@
 import { Eye, Trash2 } from "lucide-react";
 
+import { AUTH_ROLES } from "@auth/constants";
 import type { SupplyResponseSchema } from "@finance/schemas/output/supply";
 
 interface AnimalDetailsProps {
     supply: SupplyResponseSchema;
+    userRole: string | undefined;
     select: () => void;
     deleteSupply: () => void;
     showSupplyModal: () => void
     isDeleting: boolean;
 }
 
-const TableRow: React.FC<AnimalDetailsProps> = ({ supply, select, deleteSupply, isDeleting, showSupplyModal }) => {
+// Supplies deletion rolls back stock data: API requires ADMIN+.
+const ADMIN_PLUS_ROLES = [AUTH_ROLES.ADMIN, AUTH_ROLES.OWNER, AUTH_ROLES.SUPERADMIN];
+
+const TableRow: React.FC<AnimalDetailsProps> = ({ supply, userRole, select, deleteSupply, isDeleting, showSupplyModal }) => {
     const displayAnimalModal = () => {
         select()
         showSupplyModal()
     }
+
+    const canDelete = Boolean(userRole) && ADMIN_PLUS_ROLES.includes(userRole!)
 
     return (
         <tr
@@ -56,24 +63,26 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ supply, select, deleteSupply, 
                     >
                         <Eye className="size-4" />
                     </button>
-                    <button
-                        type="button"
-                        title="Eliminar"
-                        onClick={deleteSupply}
-                        className="
-                        rounded-full
-                        p-2
-                        text-foreground
-                        transition-colors
-                        hover:bg-accent
-                        hover:text-destructive
-                        focus-visible:ring-2
-                        focus-visible:ring-ring/50
-                        outline-none"
-                        disabled={isDeleting}
-                    >
-                        <Trash2 className="size-4" />
-                    </button>
+                    {canDelete && (
+                        <button
+                            type="button"
+                            title="Eliminar"
+                            onClick={deleteSupply}
+                            className="
+                            rounded-full
+                            p-2
+                            text-foreground
+                            transition-colors
+                            hover:bg-accent
+                            hover:text-destructive
+                            focus-visible:ring-2
+                            focus-visible:ring-ring/50
+                            outline-none"
+                            disabled={isDeleting}
+                        >
+                            <Trash2 className="size-4" />
+                        </button>
+                    )}
                 </div>
             </td>
         </tr>

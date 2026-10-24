@@ -12,17 +12,23 @@ import { useUser } from "../../../../hooks/user";
 import { UserRoleUpdateValidationSchema, type UserRoleUpdateType } from "../../../../schemas/input/user.schemas";
 import type { UserMeResponseSchema } from "../../../../schemas/output/user";
 import { getCurrentRole } from "../../../../utils/user.utils";
+import { AUTH_ROLES } from "../../../../constants";
 
 interface UserModalContentProps {
     user: UserMeResponseSchema;
+    userRole: string | undefined;
     roleOptions: Record<string, string>;
     onClose: (value: null) => void;
 }
 
-const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, onClose }) => {
+// Role change is owner-level: the API requires OWNER+ for PATCH role.
+const CAN_EDIT_ROLES = [AUTH_ROLES.OWNER, AUTH_ROLES.SUPERADMIN];
+
+const UserModalContent: React.FC<UserModalContentProps> = ({ user, userRole, roleOptions, onClose }) => {
     const { updateRole, isUpdatingRole } = useUser();
     const [switchEditEnabled, setSwitchEdit] = useState(false);
     const form = useFormHook(UserRoleUpdateValidationSchema, { mode: "onChange", defaultValues: { role: user.role } });
+    const canEditRole = Boolean(userRole) && CAN_EDIT_ROLES.includes(userRole!);
 
     const currentRole = form.watch("role");
 
@@ -45,9 +51,11 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, roleOptions, 
             <Card className="p-0">
                 <CardHeader className="relative gap-6 px-6 pt-6 pb-6 border-b border-border flex justify-center">
                     {/*<img src={picture} alt="avatar" className="object-cover" />*/}
-                    <button onClick={toggleSwitch} className="hover:scale-125 duration-200" title="Editar">
-                        <Edit2 className="size-4" />
-                    </button>
+                    {canEditRole && (
+                        <button onClick={toggleSwitch} className="hover:scale-125 duration-200" title="Editar">
+                            <Edit2 className="size-4" />
+                        </button>
+                    )}
                     <button onClick={() => onClose(null)} className="hover:scale-125 duration-200" title="Cerrar">
                         <EyeClosed className="size-4" />
                     </button>
@@ -144,9 +152,9 @@ interface UserModalProps extends UserModalContentProps {
     show: boolean
 }
 
-const UserModal: React.FC<UserModalProps> = ({ show, user, roleOptions, onClose }) => {
+const UserModal: React.FC<UserModalProps> = ({ show, user, userRole, roleOptions, onClose }) => {
     if (!show) return null;
-    return <UserModalContent user={user} roleOptions={roleOptions} onClose={onClose} />;
+    return <UserModalContent user={user} userRole={userRole} roleOptions={roleOptions} onClose={onClose} />;
 };
 
 export default UserModal;

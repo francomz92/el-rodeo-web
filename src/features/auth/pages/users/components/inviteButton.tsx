@@ -2,7 +2,7 @@ import { UserPlus2 } from "lucide-react";
 
 import { Button } from "@components/ui/button";
 
-import { PUBLIC_AUTH_ROLES } from "../../../constants";
+import { AUTH_ROLES } from "../../../constants";
 
 interface InviteButtonProps {
     userRole: string | undefined;
@@ -10,8 +10,11 @@ interface InviteButtonProps {
     toggleInviteModal: () => void;
 }
 
+// Invite endpoint requires ADMIN+ (owner and super_admin included).
+const ADMIN_PLUS_ROLES = [AUTH_ROLES.ADMIN, AUTH_ROLES.OWNER, AUTH_ROLES.SUPERADMIN];
+
 const InviteButton = (props: InviteButtonProps) => {
-    if (!props.userRole || ![PUBLIC_AUTH_ROLES.ADMIN, PUBLIC_AUTH_ROLES.OWNER].includes(props.userRole)) return null;
+    if (!props.userRole || !ADMIN_PLUS_ROLES.includes(props.userRole)) return null;
     return (
         <Button
             type="button"

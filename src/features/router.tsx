@@ -26,8 +26,13 @@ export default createBrowserRouter([
                 element: <Layout />,
                 children: [
                     { index: true, element: <Home /> },
-                    ...analyticsRouter.privated,
-                    ...authRouter.privated,
+                    {
+                        element: <ProtectedRoute roles={[AUTH_ROLES.ADMIN, AUTH_ROLES.OWNER, AUTH_ROLES.SUPERADMIN]} />,
+                        children: [
+                            ...analyticsRouter.privated,
+                            ...authRouter.privated,
+                        ],
+                    },
                     ...cattleRouter.privated,
                     ...financeRouter.privated,
                     {

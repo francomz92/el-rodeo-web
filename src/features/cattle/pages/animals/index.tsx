@@ -155,6 +155,7 @@ const Animals: React.FC = () => {
                                     <AnimalTableRow
                                         key={animal.id}
                                         animal={animal}
+                                        userRole={user?.role}
                                         select={() => selectAnimal(animal)}
                                         deleteAnimal={() => deleteAnimal(animal.id)}
                                         isDeleting={isDeleting}
