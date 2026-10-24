@@ -10,4 +10,7 @@ export type PurchaseResponseSchema = {
   supply_id: string,
   supply_name: string,
   created_at: string,
+  status: string,
+  confirmed_at: string | null,
+  confirmed_by: string | null,
 };

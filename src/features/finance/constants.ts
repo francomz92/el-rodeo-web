@@ -17,7 +17,19 @@ export const PURCHASE_ENDPOINTS = {
     getPurchase: "/finance/purchases/{purchaseId}",
     getPurchaseList: "/finance/purchases",
     createPurchase: "/finance/purchases",
+    confirmPurchase: "/finance/purchases/{purchaseId}/confirm",
     deletePurchase: "/finance/purchases/{purchaseId}",
+};
+
+export const PURCHASE_STATUS = {
+    PENDING: "pending",
+    CONFIRMED: "confirmed",
+} as const;
+
+export const PURCHASE_STATUS_OPTIONS = {
+    Todos: "",
+    Pendiente: PURCHASE_STATUS.PENDING,
+    Confirmada: PURCHASE_STATUS.CONFIRMED,
 };
 
 export const UNIT_OF_MEASUREMENT = {

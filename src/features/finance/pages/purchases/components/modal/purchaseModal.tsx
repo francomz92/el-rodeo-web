@@ -74,6 +74,18 @@ const PurchaseModalContent: React.FC<PurchaseModalContentProps> = ({ purchase, o
                                     </FieldLabel>
                                     <Input id="created_at" type="text" defaultValue={purchase.created_at ?? ""} className={inputStyle} disabled />
                                 </Field>
+                                <Field className="gap-1.5">
+                                    <FieldLabel htmlFor="status" className={fieldLabelStyle}>
+                                        Estado
+                                    </FieldLabel>
+                                    <Input
+                                        id="status"
+                                        type="text"
+                                        defaultValue={purchase.status === "confirmed" ? "Confirmada" : "Pendiente"}
+                                        className={inputStyle}
+                                        disabled
+                                    />
+                                </Field>
                             </div>
                         </div>
                     </div>

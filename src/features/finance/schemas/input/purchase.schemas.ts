@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { parseAsIsoDate, parseAsString, type inferParserType } from 'nuqs';
+import { parseAsStringEnum, parseAsIsoDate, parseAsString, type inferParserType } from 'nuqs';
 import { baseQueryParamsFilter } from '@shared/schemas/input/queryParams.shcemas';
 
 export const PurchaseCreationValidationSchema = z.object({
@@ -16,6 +16,7 @@ export const PurchaseListQueryParamsSchema = {
     purchase_date: parseAsIsoDate,
     unit_of_measurement: parseAsString,
     supply_id: parseAsString,
+    status: parseAsStringEnum(["pending", "confirmed"]),
     ...baseQueryParamsFilter,
 };
 

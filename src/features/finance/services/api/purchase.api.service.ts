@@ -27,6 +27,10 @@ class PurchaseAPI {
         return this.httpClient.post(PURCHASE_ENDPOINTS.createPurchase, data)
     }
 
+    confirm(purchaseId: string): Promise<PurchaseResponseSchema> {
+        return this.httpClient.post(formatString(PURCHASE_ENDPOINTS.confirmPurchase, { purchaseId }), {})
+    }
+
     delete(purchaseId: string): Promise<void> {
         return this.httpClient.delete(formatString(PURCHASE_ENDPOINTS.deletePurchase, { purchaseId }))
     }

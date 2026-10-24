@@ -15,10 +15,10 @@ import { FIELD_LABEL_STATE_STYLES, inputStyle } from "@shared/constants/styles";
 interface CreationModalContentProps {
     onClose: () => void;
     supplyOptions: Record<string, string>;
-    unitOfMeasurementOptions: Record<string, string>;
+    supplyUnits: Record<string, string>;
 }
 
-const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, supplyOptions, unitOfMeasurementOptions }) => {
+const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, supplyOptions, supplyUnits }) => {
     const { create, isCreating } = usePurchase();
     const [currentSupplyName, setCurrentSupplyName] = useState("");
     const [currentUnitOfMeasurement, setCurrentUnitOfMeasurement] = useState("");
@@ -44,11 +44,12 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, su
                 setCurrentSupplyName(name);
             }
         }
-    };
-
-    const onSelectUnitOfMeasurement = (unit: string) => {
-        form.setValue("unit_of_measurement", unit, { shouldValidate: true });
-        setCurrentUnitOfMeasurement(unit);
+        // The purchase unit is fixed to the supply's unit: stock entries must match
+        const unit = supplyUnits[supplyId];
+        setCurrentUnitOfMeasurement(unit ?? "");
+        if (unit) {
+            form.setValue("unit_of_measurement", unit, { shouldValidate: true });
+        }
     };
 
     const numberInput = (name: "amount" | "price" | "unit_price") => ({
@@ -110,10 +111,13 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, su
                                         <FieldLabel htmlFor="unit_of_measurement" className={fieldLabelStyle}>
                                             Unidad de medida
                                         </FieldLabel>
-                                        <SelectInput
-                                            defaultValue={currentUnitOfMeasurement}
-                                            onValueChange={onSelectUnitOfMeasurement}
-                                            options={unitOfMeasurementOptions}
+                                        <Input
+                                            id="unit_of_measurement"
+                                            type="text"
+                                            className={inputStyle}
+                                            value={currentUnitOfMeasurement}
+                                            disabled
+                                            title="Se toma de la unidad del insumo seleccionado"
                                         />
                                         <FieldError
                                             errors={
@@ -203,9 +207,9 @@ interface CreationModalProps extends CreationModalContentProps {
     show: boolean;
 }
 
-const CreationModal: React.FC<CreationModalProps> = ({ show, onClose, supplyOptions, unitOfMeasurementOptions }) => {
+const CreationModal: React.FC<CreationModalProps> = ({ show, onClose, supplyOptions, supplyUnits }) => {
     if (!show) return null;
-    return <CreationModalContent onClose={onClose} supplyOptions={supplyOptions} unitOfMeasurementOptions={unitOfMeasurementOptions} />;
+    return <CreationModalContent onClose={onClose} supplyOptions={supplyOptions} supplyUnits={supplyUnits} />;
 };
 
 export default CreationModal;

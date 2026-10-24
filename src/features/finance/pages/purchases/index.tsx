@@ -4,12 +4,12 @@ import { SelectInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useProfile } from "@auth/hooks/profile";
 
-import { PurchaseModal, PurchaseTableRow, CreationModal } from "./components";
+import { PurchaseModal, PurchaseTableRow, CreationModal, ConfirmPurchaseDialog, DeletePurchaseDialog } from "./components";
 import CreateButton from "./components/createButton";
 import { usePurchase, usePurchaseList } from "@finance/hooks/purchases";
 import { useSupplyList } from "@finance/hooks/supply";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
-import { UNIT_OF_MEASUREMENT } from "@finance/constants";
+import { PURCHASE_STATUS_OPTIONS, UNIT_OF_MEASUREMENT } from "@finance/constants";
 
 const Modal = {
     DETAILS: "details",
@@ -20,11 +20,14 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 const Purchases: React.FC = () => {
     const { user } = useProfile()
     const { purchaseList, setQueryParams, isError, isPending } = usePurchaseList();
-    const { delete: deletePurchase, isDeleting } = usePurchase();
+    const { delete: deletePurchase, isDeleting, confirm: confirmPurchase, isConfirming } = usePurchase();
     const { supplyList, isPending: suppliesIsPending } = useSupplyList();
     const [currentSupplyName, setCurrentSupplyName] = useState<string | undefined>(undefined)
     const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
+    const [supplyUnits, setSupplyUnits] = useState<Record<string, string>>({})
     const [selectedPurchase, setSelectedPurchase] = useState<PurchaseResponseSchema | null>(null);
+    const [purchaseToConfirm, setPurchaseToConfirm] = useState<PurchaseResponseSchema | null>(null);
+    const [purchaseToDelete, setPurchaseToDelete] = useState<PurchaseResponseSchema | null>(null);
     const [displayModal, setDisplayModal] = useState<ModalType | null>(null)
 
     const unitOfMeasurementOptions: Record<string, string> = {};
@@ -35,8 +38,10 @@ const Purchases: React.FC = () => {
     useEffect(() => {
         if (supplyList?.length) {
             let options: Record<string, string> = {}
-            supplyList.forEach(s => { options[s.name] = s.id })
+            let units: Record<string, string> = {}
+            supplyList.forEach(s => { options[s.name] = s.id; units[s.id] = s.unit_of_measurement })
             setSupplyOptions({...options})
+            setSupplyUnits({...units})
         }
     }, [supplyList])
 
@@ -55,6 +60,11 @@ const Purchases: React.FC = () => {
         setQueryParams(prev => ({...prev, unit_of_measurement: value}))
     }
 
+    const updateStatus = (value: string | undefined) => {
+        const status = value === "Todos" || !value ? null : value
+        setQueryParams(prev => ({ ...(prev as Record<string, unknown>), status: status as "pending" | "confirmed" }))
+    }
+
     const selectPurchase = (purchase: PurchaseResponseSchema | null) => {
         setSelectedPurchase(purchase)
     };
@@ -68,7 +78,7 @@ const Purchases: React.FC = () => {
             {isDeleting && <WaveSpinner />}
             <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
-                <div className="mb-6 grid gap-4 sm:grid-cols-3">
+                <div className="mb-6 grid gap-4 sm:grid-cols-4">
                     <SelectInput
                         defaultValue={currentSupplyName ?? "Todos"}
                         onValueChange={updateSupply}
@@ -78,6 +88,11 @@ const Purchases: React.FC = () => {
                         defaultValue="Todos"
                         onValueChange={updateUnitOfMeasurement}
                         options={{Todos: "", ...unitOfMeasurementOptions}}
+                    />
+                    <SelectInput
+                        defaultValue="Todos"
+                        onValueChange={updateStatus}
+                        options={PURCHASE_STATUS_OPTIONS}
                     />
                     <CreateButton
                         userRole={user?.role}
@@ -98,6 +113,7 @@ const Purchases: React.FC = () => {
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Precio unitario</th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha</th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Registrada por</th>
+                                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
                                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
                                 </tr>
                             </thead>
@@ -107,7 +123,7 @@ const Purchases: React.FC = () => {
                                     <>
                                         {[0, 1, 2].map((row) => (
                                             <tr key={`skeleton-${row}`} className="border-b border-border last:border-0">
-                                                <td colSpan={7} className="px-4 py-3">
+                                                <td colSpan={8} className="px-4 py-3">
                                                     {row === 0 && <span className="sr-only">Cargando...</span>}
                                                     <div aria-hidden="true" className="h-5 animate-pulse rounded-md bg-muted" />
                                                 </td>
@@ -122,15 +138,17 @@ const Purchases: React.FC = () => {
                                         purchase={purchase}
                                         userRole={user?.role}
                                         select={() => selectPurchase(purchase)}
-                                        deletePurchase={() => deletePurchase(purchase.id)}
+                                        deletePurchase={() => setPurchaseToDelete(purchase)}
+                                        requestConfirm={() => setPurchaseToConfirm(purchase)}
                                         isDeleting={isDeleting}
+                                        isConfirming={isConfirming}
                                         showPurchaseModal={() => setDisplayModal(Modal.DETAILS)}
                                     />
                                 ))}
                                 {/* Error con reintento */}
                                 {!isPending && !suppliesIsPending && isError && (
                                     <tr>
-                                        <td colSpan={7} className="px-4 py-10 text-center">
+                                        <td colSpan={8} className="px-4 py-10 text-center">
                                             <p className="font-medium text-destructive">No se pudieron cargar las compras.</p>
                                             <Button
                                                 type="button"
@@ -147,7 +165,7 @@ const Purchases: React.FC = () => {
                                 {/* Vacío con conteo */}
                                 {!isPending && !suppliesIsPending && !isError && !purchaseList?.length && (
                                     <tr>
-                                        <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                                        <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">
                                             0 compras — No se encontraron compras. Registre una nueva con el botón Nuevo.
                                         </td>
                                     </tr>
@@ -161,13 +179,31 @@ const Purchases: React.FC = () => {
                 show={displayModal === Modal.CREATE}
                 onClose={closeModal}
                 supplyOptions={supplyOptions}
-                unitOfMeasurementOptions={unitOfMeasurementOptions}
+                supplyUnits={supplyUnits}
             />
             <PurchaseModal
                 show={displayModal === Modal.DETAILS}
                 purchase={selectedPurchase!}
                 onClose={() => selectPurchase(null)}
                 closeModal={closeModal}
+            />
+            <ConfirmPurchaseDialog
+                purchase={purchaseToConfirm}
+                isConfirming={isConfirming}
+                onConfirm={(purchaseId) => {
+                    confirmPurchase(purchaseId)
+                    setPurchaseToConfirm(null)
+                }}
+                onClose={() => setPurchaseToConfirm(null)}
+            />
+            <DeletePurchaseDialog
+                purchase={purchaseToDelete}
+                isDeleting={isDeleting}
+                onDelete={(purchaseId) => {
+                    deletePurchase(purchaseId)
+                    setPurchaseToDelete(null)
+                }}
+                onClose={() => setPurchaseToDelete(null)}
             />
         </section>
     );
