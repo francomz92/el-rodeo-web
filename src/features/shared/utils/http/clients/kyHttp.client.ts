@@ -1,6 +1,6 @@
 import ky, { type KyInstance, type ResponsePromise, type NormalizedOptions } from "ky";
 
-import type { IHttpClient } from "../../../interfaces/http/clients";
+import type { DownloadedFileSchema, IHttpClient } from "../../../interfaces/http/clients";
 import { StandardErrorResponseSchema, type ErrorPayloadSchema, type ErrorResponseType } from "../../../schemas/output/responses.schemas";
 import { queryClient } from "@lib/reactQuery.lib";
 import { Toast } from "@lib/utils/notifications";
@@ -146,6 +146,13 @@ class KyHttpClient implements IHttpClient {
 
     get<T>(url: string, queryParams: Record<string, any> = {}): Promise<T> {
         return this.client.get(url, { searchParams: queryParams }).json()
+    }
+    async getBlob(url: string, queryParams: Record<string, any> = {}): Promise<DownloadedFileSchema> {
+        const response = await this.client.get(url, { searchParams: queryParams })
+        const blob = await response.blob()
+        const disposition = response.headers.get("content-disposition") ?? ""
+        const match = disposition.match(/filename="?([^";]+)"?/i)
+        return { blob, filename: match?.[1] ?? null }
     }
     post<T>(url: string, body: Record<string, any>): Promise<T> {
         return this.client.post(url, { json: body }).json()
