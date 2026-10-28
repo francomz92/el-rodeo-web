@@ -107,7 +107,7 @@ const SupplyModalContent: React.FC<SupplyModalContentProps> = ({ supply, typeOpt
                                             <Input id="type" type="text" defaultValue={supply.type.name} className={inputStyle} disabled />
                                         ) : (
                                             <SelectInput
-                                                defaultValue={currentTypeName}
+                                                value={currentTypeName}
                                                 onValueChange={onSelectType}
                                                 options={typeOptions}
                                             />
@@ -188,7 +188,7 @@ const SupplyModalContent: React.FC<SupplyModalContentProps> = ({ supply, typeOpt
                                             />
                                         ) : (
                                             <SelectInput
-                                                defaultValue={currentUnitOfMeasurement}
+                                                value={currentUnitOfMeasurement}
                                                 onValueChange={onSelectUnitOfMeasurement}
                                                 options={unitOfMeasurementOptions}
                                             />

@@ -80,17 +80,17 @@ const Purchases: React.FC = () => {
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
                     <SelectInput
-                        defaultValue={currentSupplyName ?? "Todos"}
+                        value={currentSupplyName ?? "Todos"}
                         onValueChange={updateSupply}
                         options={{Todos: "", ...supplyOptions}}
                     />
                     <SelectInput
-                        defaultValue="Todos"
+                        value="Todos"
                         onValueChange={updateUnitOfMeasurement}
                         options={{Todos: "", ...unitOfMeasurementOptions}}
                     />
                     <SelectInput
-                        defaultValue="Todos"
+                        value="Todos"
                         onValueChange={updateStatus}
                         options={PURCHASE_STATUS_OPTIONS}
                     />

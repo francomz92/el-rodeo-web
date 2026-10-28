@@ -66,7 +66,7 @@ const PurchaseModalContent: React.FC<PurchaseModalContentProps> = ({ purchase, o
                                     <FieldLabel htmlFor="user_name" className={fieldLabelStyle}>
                                         Registrada por
                                     </FieldLabel>
-                                    <Input id="user_name" type="text" defaultValue={purchase.user_name} className={inputStyle} disabled />
+                                    <Input id="user_name" type="text" defaultValue={purchase.user_name ?? ""} className={inputStyle} disabled />
                                 </Field>
                                 <Field className="gap-1.5">
                                     <FieldLabel htmlFor="created_at" className={fieldLabelStyle}>

@@ -67,7 +67,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <FieldLabel htmlFor="type" className={fieldLabelStyle}>
                                             Tipo
                                         </FieldLabel>
-                                        <SelectInput defaultValue={currentTypeName} onValueChange={onSelectType} options={typeOptions} />
+                                        <SelectInput value={currentTypeName} onValueChange={onSelectType} options={typeOptions} />
                                         <FieldError
                                             errors={
                                                 Boolean(form.errors?.type_id)
@@ -134,7 +134,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                             Unidad de medida
                                         </FieldLabel>
                                         <SelectInput
-                                            defaultValue={currentUnitOfMeasurement}
+                                            value={currentUnitOfMeasurement}
                                             onValueChange={onSelectUnitOfMeasurement}
                                             options={unitOfMeasurementOptions}
                                         />

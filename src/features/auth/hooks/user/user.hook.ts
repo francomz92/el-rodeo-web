@@ -7,6 +7,7 @@ import userQueryKeys from "./queryKeys";
 import { userAPI } from "../../services/api";
 import type { UserRoleUpdateType } from "../../schemas/input/user.schemas";
 import type { ErrorResponseType } from "../../../shared/schemas/output/responses.schemas";
+import { notifyApiError } from "@shared/utils/errors.utils";
 
 
 const useUser = () => {
@@ -31,11 +32,7 @@ const useUser = () => {
             queryClient.invalidateQueries({ queryKey: userQueryKeys.detail(userId) });
             queryClient.invalidateQueries({ queryKey: userQueryKeys.lists() })
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     const deleteUserMutation = useMutation({
@@ -45,11 +42,7 @@ const useUser = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: userQueryKeys.lists() });
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     return {

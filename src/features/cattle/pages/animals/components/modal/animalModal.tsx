@@ -156,7 +156,7 @@ const AnimalModalContent: React.FC<AnimalModalContentProps> = ({ animal, typeOpt
                                                 />
                                             ) : (
                                                 <SelectInput
-                                                    defaultValue={currentTypeName}
+                                                    value={currentTypeName}
                                                     onValueChange={onSelectType}
                                                     options={typeOptions}
                                                 />
@@ -283,7 +283,7 @@ const AnimalModalContent: React.FC<AnimalModalContentProps> = ({ animal, typeOpt
                                                 />
                                             ) : (
                                                 <SelectInput
-                                                    defaultValue={currentStatusName}
+                                                    value={currentStatusName}
                                                     onValueChange={onSelectStatus}
                                                     options={ANIMAL_STATUS}
                                                 />

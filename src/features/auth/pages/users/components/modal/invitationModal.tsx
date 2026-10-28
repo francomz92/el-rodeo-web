@@ -103,7 +103,7 @@ const InvitationModalContent: React.FC<InvitationModalContentProps> = ({ onClose
                                     <Field className="gap-1.5">
                                         <FieldLabel className="text-sm font-semibold text-foreground">Rol</FieldLabel>
                                         <SelectInput
-                                            defaultValue={currentRole ? getCurrentRole(currentRole, roleOptions) : ""}
+                                            value={currentRole ? getCurrentRole(currentRole, roleOptions) : ""}
                                             onValueChange={onSelectRole}
                                             options={roleOptions}
                                         />

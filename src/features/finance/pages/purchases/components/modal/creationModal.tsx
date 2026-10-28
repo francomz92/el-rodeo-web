@@ -80,7 +80,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, su
                                         <FieldLabel htmlFor="supply_id" className={fieldLabelStyle}>
                                             Insumo
                                         </FieldLabel>
-                                        <SelectInput defaultValue={currentSupplyName} onValueChange={onSelectSupply} options={supplyOptions} />
+                                        <SelectInput value={currentSupplyName} onValueChange={onSelectSupply} options={supplyOptions} />
                                         <FieldError
                                             errors={
                                                 Boolean(form.errors?.supply_id)

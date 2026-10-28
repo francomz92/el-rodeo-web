@@ -5,6 +5,7 @@ import { animalScheduleEventAPI } from "../../services/api";
 import type { AnimalScheduleEventCreationType, AnimalScheduleEventUpdateType } from "../../schemas/input/animalScheduleEvents.schemas";
 import useToast from "@hooks/toast.hook";
 import type { ErrorResponseType } from "@shared/schemas/output/responses.schemas";
+import { notifyApiError } from "@shared/utils/errors.utils";
 
 const useAnimalScheduleEvent = () => {
     const queryClient = useQueryClient();
@@ -15,11 +16,7 @@ const useAnimalScheduleEvent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details?.length)) {
-                toast.error(error?.error?.message!);
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     const updateAnimalScheduleEventMutation = useMutation({
@@ -29,11 +26,7 @@ const useAnimalScheduleEvent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details?.length)) {
-                toast.error(error?.error?.message!);
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     const deleteAnimalScheduleEventMutatio = useMutation({
@@ -41,11 +34,7 @@ const useAnimalScheduleEvent = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: animalScheduleEventQueryKeys.all });
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details?.length)) {
-                toast.error(error?.error?.message!);
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     return {

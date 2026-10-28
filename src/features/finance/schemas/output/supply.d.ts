@@ -8,6 +8,6 @@ export type SupplyResponseSchema = {
     unit_of_measurement: string
     created_at: string
     description: string
-    user_id: string
+    user_id: string | null
     type: SupplyTypeResponseSchema
 }

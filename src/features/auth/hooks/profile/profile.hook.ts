@@ -6,6 +6,7 @@ import { userAPI } from "../../services/api";
 import profileQueryKeys from "./queryKeys";
 import type { PasswordChangeType, UserMeType } from "../../schemas/input/user.schemas";
 import type { ErrorResponseType } from "../../../shared/schemas/output/responses.schemas";
+import { notifyApiError } from "@shared/utils/errors.utils";
 
 const useProfile = () => {
     const queryClient = useQueryClient();
@@ -37,11 +38,7 @@ const useProfile = () => {
             queryClient.invalidateQueries({ queryKey: profileQueryKeys.me });
             toast.success("Perfil actualizado correctamente");
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!);
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     const changePassword = useMutation({
@@ -49,11 +46,7 @@ const useProfile = () => {
         onSuccess: ({ message }) => {
             toast.success(message);
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!);
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     return {

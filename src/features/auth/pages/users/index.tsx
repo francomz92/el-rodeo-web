@@ -68,7 +68,7 @@ const Users: React.FC = () => {
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
                     <SelectInput
-                        defaultValue={getCurrentRole(queryParams.role, SELECT_ROLE_OPTIONS)}
+                        value={getCurrentRole(queryParams.role, SELECT_ROLE_OPTIONS)}
                         onValueChange={updateRole}
                         options={SELECT_ROLE_OPTIONS}
                     />

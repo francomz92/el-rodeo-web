@@ -1,7 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-
+/* Global Tailwind chain lives in index.css (imported by main.tsx).
+   This file only contributes spinner/theme animations to that chain. */
 @theme {
     /* Animación para el RippleSpinner */
     --animate-ripple: ripple 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;

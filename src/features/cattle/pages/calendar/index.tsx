@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarClock, CalendarPlus } from "lucide-react";
 
 import FullCalendar, { useCalendarController } from "@fullcalendar/react";
@@ -36,6 +36,8 @@ const Calendar: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedEvents, setSelectedEvents] = useState<ExtendedEventProps[]>([]);
+    /** Tooltip node owned by each mounted event element; removed on unmount. */
+    const eventTooltips = useRef(new Map<HTMLElement, HTMLDivElement>());
 
     useEffect(() => {
         if (!selectedDate) return;
@@ -192,10 +194,12 @@ const Calendar: React.FC = () => {
                     eventDidMount={(info) => {
                         const description = info.event.extendedProps.description?.trim();
                         if (!description) return;
+                        eventTooltips.current.get(info.el)?.remove();
                         const tooltip = document.createElement("div");
                         tooltip.textContent = description;
                         tooltip.className = "fc-custom-tooltip";
                         document.body.appendChild(tooltip);
+                        eventTooltips.current.set(info.el, tooltip);
                         info.el.addEventListener("mouseenter", () => {
                             const rect = info.el.getBoundingClientRect();
                             tooltip.style.left = `${rect.right}px`;
@@ -205,6 +209,11 @@ const Calendar: React.FC = () => {
                         info.el.addEventListener("mouseleave", () => {
                             tooltip.style.opacity = "0";
                         });
+                    }}
+                    eventWillUnmount={(info) => {
+                        const tooltip = eventTooltips.current.get(info.el);
+                        tooltip?.remove();
+                        eventTooltips.current.delete(info.el);
                     }}
                     eventClick={(info) => {
                         info.jsEvent.stopPropagation()

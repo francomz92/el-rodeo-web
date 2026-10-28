@@ -69,7 +69,7 @@ const TableRow: React.FC<PurchaseDetailsProps> = ({
             <td className="px-4 py-3 text-foreground tabular-nums">${purchase.price.toLocaleString("es-AR")}</td>
             <td className="px-4 py-3 text-foreground tabular-nums">${purchase.unit_price.toLocaleString("es-AR")}</td>
             <td className="px-4 py-3 text-foreground">{purchase.purchase_date}</td>
-            <td className="px-4 py-3 text-foreground">{purchase.user_name}</td>
+            <td className="px-4 py-3 text-foreground">{purchase.user_name ?? "—"}</td>
             <td className="px-4 py-3">
                 <StatusBadge
                     status={STATUS_LABELS[purchase.status] ?? purchase.status}

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { useToast } from "@hooks/index"
 import type { ErrorResponseType } from "@shared/schemas/output/responses.schemas"
+import { notifyApiError } from "@shared/utils/errors.utils"
 
 import purchaseQueryKeys from "./queryKeys"
 import supplyQueryKeys from "../supply/queryKeys"
@@ -28,11 +29,7 @@ const usePurchase = (purchaseId?: string) => {
             // Creating a purchase no longer moves stock: only purchases cache is affected
             queryClient.invalidateQueries({ queryKey: purchaseQueryKeys.lists() })
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        }
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
 
     const confirmPurchaseMutation = useMutation({
@@ -44,11 +41,7 @@ const usePurchase = (purchaseId?: string) => {
             queryClient.invalidateQueries({ queryKey: purchaseQueryKeys.detail(purchaseId) })
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.all })
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        }
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
 
     const deletePurchaseMutation = useMutation({
@@ -60,11 +53,7 @@ const usePurchase = (purchaseId?: string) => {
             queryClient.invalidateQueries({ queryKey: purchaseQueryKeys.detail(purchaseId) })
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.all })
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        }
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
 
     return {

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { useToast } from "@hooks/index"
 import type { ErrorResponseType } from "@shared/schemas/output/responses.schemas"
+import { notifyApiError } from "@shared/utils/errors.utils"
 
 import supplyQueryKeys from "./queryKeys"
 import { supplyAPI } from "../../services/api"
@@ -34,11 +35,7 @@ const useSupply = (supplyId?: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.lists() })
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        }
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
 
     const deleteAnimalMutation = useMutation({
@@ -48,11 +45,7 @@ const useSupply = (supplyId?: string) => {
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.lists() })
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.detail(supplyId) })
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        }
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
 
     return {

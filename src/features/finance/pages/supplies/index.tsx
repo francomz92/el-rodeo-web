@@ -74,7 +74,7 @@ const Supplies: React.FC = () => {
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
                     <SelectInput
-                        defaultValue={selectedType?.name ?? "Todos"}
+                        value={selectedType?.name ?? "Todos"}
                         onValueChange={updateType}
                         options={{Todos: "", ...animalTypes}}
                     />
@@ -129,7 +129,6 @@ const Supplies: React.FC = () => {
                                         deleteSupply={() => deleteSupply(supply.id)}
                                         isDeleting={isDeleting}
                                         showSupplyModal={() => setDisplayModal(Modal.DETAILS)}
-                                        // showProtocolsModal={() => setDisplayModal(Modal.PROTOCOLS)}
                                     />
                                 ))}
                                 {/* Error con reintento */}

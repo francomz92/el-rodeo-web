@@ -95,7 +95,7 @@ const Animals: React.FC = () => {
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
                     <SelectInput
-                        defaultValue={selectedType?.name ?? "Todos"}
+                        value={selectedType?.name ?? "Todos"}
                         onValueChange={updateType}
                         options={{ Todos: "", ...animalTypes }}
                     />

@@ -91,7 +91,7 @@ const CreationModalContent: React.FC<CreationModalContentProps> = ({ onClose, ty
                                         <FieldLabel htmlFor="type_id" className="text-sm font-semibold text-foreground">
                                             Tipo
                                         </FieldLabel>
-                                        <SelectInput defaultValue={currentTypeName} onValueChange={onSelectType} options={typeOptions} />
+                                        <SelectInput value={currentTypeName} onValueChange={onSelectType} options={typeOptions} />
                                     </Field>
                                     <Field className="gap-1.5">
                                         <FieldLabel htmlFor="breed" className="text-sm text-semibold text-foreground">

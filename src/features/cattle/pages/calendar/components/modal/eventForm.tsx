@@ -171,7 +171,7 @@ export const EventForm: React.FC<EventFormProps> = ({ onClose, date, changeDate,
 
                     <Field>
                         <FieldLabel>Tipo</FieldLabel>
-                        <SelectInput defaultValue={typeTrigger ?? "otro"} options={AnimalEventTypes} onValueChange={onSelectType} />
+                        <SelectInput value={typeTrigger ?? "otro"} options={AnimalEventTypes} onValueChange={onSelectType} />
                         {form.errors.type && <FieldError>{form.errors.type.message}</FieldError>}
                     </Field>
 

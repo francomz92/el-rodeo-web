@@ -119,7 +119,7 @@ const UserModalContent: React.FC<UserModalContentProps> = ({ user, userRole, rol
                                             <>
                                                 <FieldLabel className="text-sm font-semibold text-foreground">Rol</FieldLabel>
                                                 <SelectInput
-                                                    defaultValue={getCurrentRole(currentRole, roleOptions)}
+                                                    value={getCurrentRole(currentRole, roleOptions)}
                                                     onValueChange={onSelectRole}
                                                     options={roleOptions}
                                                 />

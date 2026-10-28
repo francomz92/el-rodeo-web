@@ -6,6 +6,7 @@ import { useToast } from "@hooks/index";
 import { authAPI } from "../../services/api";
 import type { LoginType, RegisterInviteType } from "../../schemas/input/authentication.schemas";
 import type { ErrorResponseType } from "../../../shared/schemas/output/responses.schemas";
+import { notifyApiError } from "@shared/utils/errors.utils";
 
 const useAuth = () => {
     const queryClient = useQueryClient();
@@ -19,11 +20,7 @@ const useAuth = () => {
             toast.success(message);
             navigate("/", { replace: true });
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     const logoutMutation = useMutation({
@@ -39,11 +36,7 @@ const useAuth = () => {
         onSuccess: () => {
             toast.success("Usuario invitado correctamente");
         },
-        onError: (error: ErrorResponseType) => {
-            if (error?.success === false && !Boolean(error?.error?.details!.length)) {
-                toast.error(error?.error?.message!)
-            }
-        },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     return {

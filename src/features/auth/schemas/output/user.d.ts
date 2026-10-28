@@ -8,7 +8,7 @@ export type UserMeResponseSchema = {
     email: string;
     role: string;
     is_active: boolean;
-    tenant_id: string;
+    tenant_id: string | null;
 };
 
 export type UserRoleUpdateResponseSchema = {
