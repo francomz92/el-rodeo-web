@@ -23,7 +23,6 @@ export default defineConfig({
             "@analytics": resolve(__dirname, "./src/features/analytics"),
             "@cattle": resolve(__dirname, "./src/features/cattle"),
             "@finance": resolve(__dirname, "./src/features/finance"),
-            "@market": resolve(__dirname, "./src/features/market"),
             "@reports": resolve(__dirname, "./src/features/reports"),
         }
     }

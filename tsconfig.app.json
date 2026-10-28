@@ -31,7 +31,6 @@
         "@analytics/*": ["./src/features/analytics/*"],
         "@cattle/*": ["./src/features/cattle/*"],
         "@finance/*": ["./src/features/finance/*"],
-        "@market/*": ["./src/features/market/*"],
         "@reports/*": ["./src/features/reports/*"],
         "@shared/*": ["./src/features/shared/*"]
     },
