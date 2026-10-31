@@ -29,6 +29,8 @@ const Purchases: React.FC = () => {
     const [purchaseToConfirm, setPurchaseToConfirm] = useState<PurchaseResponseSchema | null>(null);
     const [purchaseToDelete, setPurchaseToDelete] = useState<PurchaseResponseSchema | null>(null);
     const [displayModal, setDisplayModal] = useState<ModalType | null>(null)
+    const [currentUnit, setCurrentUnit] = useState<string>("Todos")
+    const [currentStatus, setCurrentStatus] = useState<string>("Todos")
 
     const unitOfMeasurementOptions: Record<string, string> = {};
     Object.values(UNIT_OF_MEASUREMENT).forEach(unit => {
@@ -57,11 +59,13 @@ const Purchases: React.FC = () => {
         if (value === "Todos") {
             value = ""
         }
+        setCurrentUnit(value ? value : "Todos")
         setQueryParams(prev => ({...prev, unit_of_measurement: value}))
     }
 
     const updateStatus = (value: string | undefined) => {
         const status = value === "Todos" || !value ? null : value
+        setCurrentStatus(status ?? "Todos")
         setQueryParams(prev => ({ ...(prev as Record<string, unknown>), status: status as "pending" | "confirmed" }))
     }
 
@@ -85,12 +89,12 @@ const Purchases: React.FC = () => {
                         options={{Todos: "", ...supplyOptions}}
                     />
                     <SelectInput
-                        value="Todos"
+                        value={currentUnit}
                         onValueChange={updateUnitOfMeasurement}
                         options={{Todos: "", ...unitOfMeasurementOptions}}
                     />
                     <SelectInput
-                        value="Todos"
+                        value={currentStatus}
                         onValueChange={updateStatus}
                         options={PURCHASE_STATUS_OPTIONS}
                     />
