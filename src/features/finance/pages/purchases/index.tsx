@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { SelectInput, WaveSpinner } from "@components/index";
+import { FilterSelect, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useProfile } from "@auth/hooks/profile";
 
@@ -8,6 +8,7 @@ import { PurchaseModal, PurchaseTableRow, CreationModal, ConfirmPurchaseDialog, 
 import CreateButton from "./components/createButton";
 import { usePurchase, usePurchaseList } from "@finance/hooks/purchases";
 import { useSupplyList } from "@finance/hooks/supply";
+import type { PurchaseListQueryParams } from "@finance/schemas/input/purchase.schemas";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
 import { PURCHASE_STATUS_OPTIONS, UNIT_OF_MEASUREMENT } from "@finance/constants";
 
@@ -19,18 +20,15 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 
 const Purchases: React.FC = () => {
     const { user } = useProfile()
-    const { purchaseList, setQueryParams, isError, isPending } = usePurchaseList();
+    const { purchaseList, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
     const { delete: deletePurchase, isDeleting, confirm: confirmPurchase, isConfirming } = usePurchase();
     const { supplyList, isPending: suppliesIsPending } = useSupplyList();
-    const [currentSupplyName, setCurrentSupplyName] = useState<string | undefined>(undefined)
     const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
     const [supplyUnits, setSupplyUnits] = useState<Record<string, string>>({})
     const [selectedPurchase, setSelectedPurchase] = useState<PurchaseResponseSchema | null>(null);
     const [purchaseToConfirm, setPurchaseToConfirm] = useState<PurchaseResponseSchema | null>(null);
     const [purchaseToDelete, setPurchaseToDelete] = useState<PurchaseResponseSchema | null>(null);
     const [displayModal, setDisplayModal] = useState<ModalType | null>(null)
-    const [currentUnit, setCurrentUnit] = useState<string>("Todos")
-    const [currentStatus, setCurrentStatus] = useState<string>("Todos")
 
     const unitOfMeasurementOptions: Record<string, string> = {};
     Object.values(UNIT_OF_MEASUREMENT).forEach(unit => {
@@ -47,28 +45,6 @@ const Purchases: React.FC = () => {
         }
     }, [supplyList])
 
-    const updateSupply = (value: string | undefined) => {
-        if (value === "Todos") {
-            value = ""
-        }
-        setCurrentSupplyName(supplyList?.find(s => s.id === value)?.name)
-        setQueryParams(prev => ({...prev, supply_id: value}))
-    }
-
-    const updateUnitOfMeasurement = (value: string | undefined) => {
-        if (value === "Todos") {
-            value = ""
-        }
-        setCurrentUnit(value ? value : "Todos")
-        setQueryParams(prev => ({...prev, unit_of_measurement: value}))
-    }
-
-    const updateStatus = (value: string | undefined) => {
-        const status = value === "Todos" || !value ? null : value
-        setCurrentStatus(status ?? "Todos")
-        setQueryParams(prev => ({ ...(prev as Record<string, unknown>), status: status as "pending" | "confirmed" }))
-    }
-
     const selectPurchase = (purchase: PurchaseResponseSchema | null) => {
         setSelectedPurchase(purchase)
     };
@@ -83,20 +59,20 @@ const Purchases: React.FC = () => {
             <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
-                    <SelectInput
-                        value={currentSupplyName ?? "Todos"}
-                        onValueChange={updateSupply}
-                        options={{Todos: "", ...supplyOptions}}
+                    <FilterSelect
+                        value={queryParams.supply_id}
+                        options={supplyOptions}
+                        onValueChange={(supply_id) => setQueryParams(prev => ({ ...prev, supply_id: supply_id ?? null, offset: 0 }))}
                     />
-                    <SelectInput
-                        value={currentUnit}
-                        onValueChange={updateUnitOfMeasurement}
-                        options={{Todos: "", ...unitOfMeasurementOptions}}
+                    <FilterSelect
+                        value={queryParams.unit_of_measurement}
+                        options={unitOfMeasurementOptions}
+                        onValueChange={(unit_of_measurement) => setQueryParams(prev => ({ ...prev, unit_of_measurement: unit_of_measurement ?? null, offset: 0 }))}
                     />
-                    <SelectInput
-                        value={currentStatus}
-                        onValueChange={updateStatus}
+                    <FilterSelect
+                        value={queryParams.status}
                         options={PURCHASE_STATUS_OPTIONS}
+                        onValueChange={(status) => setQueryParams(prev => ({ ...prev, status: (status ?? null) as PurchaseListQueryParams["status"], offset: 0 }))}
                     />
                     <CreateButton
                         userRole={user?.role}

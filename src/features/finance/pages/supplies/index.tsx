@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { SelectInput, SearchInput, WaveSpinner } from "@components/index";
+import { FilterSelect, SearchInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
-import type { AnimalTypeResponseSchema } from "@cattle/schemas/output/animalTypes";
 
 import { SupplyModal, CreationModal, SupplyTableRow } from "./components";
 import CreateButton from "./components/createButton";
@@ -21,12 +20,11 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 
 const Supplies: React.FC = () => {
     const { user } = useProfile()
-    const { supplyList, setQueryParams, isError, isPending } = useSupplyList();
+    const { supplyList, queryParams, setQueryParams, isError, isPending } = useSupplyList();
     const { delete: deleteSupply, isDeleting } = useSupply();
     const { supplyTypeList, isPending: typesIsPending } = useSupplyTypeList()
-    const [selectedType, setSelectedType] = useState<AnimalTypeResponseSchema | undefined>(undefined)
     const [nameSearched, setNameSearched] = useState<string | undefined>(undefined)
-    const [animalTypes, setAnimalTypes] = useState<Record<string, string>>({})
+    const [supplyTypes, setSupplyTypes] = useState<Record<string, string>>({})
     // Modales statues
     const [selectedSupply, setSelectedSupply] = useState<SupplyResponseSchema | null>(null);
     const [displayModal, setDisplayModal] = useState<ModalType | null>(null)
@@ -42,12 +40,16 @@ const Supplies: React.FC = () => {
         if (supplyTypeList?.length) {
             let types: Record<string, string> = {}
             supplyTypeList.forEach(t => { types[t.name] = t.id })
-            setAnimalTypes({...types})
+            setSupplyTypes({...types})
         }
     }, [supplyTypeList])
 
     useEffect(() => {
-        setQueryParams(prev => ({...prev, name: nameSearchDebounce}))
+        setQueryParams(prev => ({
+            ...prev,
+            name: nameSearchDebounce,
+            offset: prev.name === (nameSearchDebounce ?? null) ? prev.offset : 0,
+        }))
     }, [nameSearchDebounce])
 
 
@@ -59,24 +61,16 @@ const Supplies: React.FC = () => {
         setDisplayModal(null)
     };
 
-    const updateType = (value: string | undefined) => {
-        if (value === "Todos") {
-            value = ""
-        }
-        setSelectedType(supplyTypeList?.find(t => t.id === value))
-        setQueryParams(prev => ({...prev, type_id: value}))
-    }
-
     return (
         <section>
             {isDeleting && <WaveSpinner />}
             <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
-                    <SelectInput
-                        value={selectedType?.name ?? "Todos"}
-                        onValueChange={updateType}
-                        options={{Todos: "", ...animalTypes}}
+                    <FilterSelect
+                        value={queryParams.type_id}
+                        options={supplyTypes}
+                        onValueChange={(type_id) => setQueryParams(prev => ({ ...prev, type_id: type_id ?? null, offset: 0 }))}
                     />
                     <SearchInput
                         value={nameSearched ?? ""}
@@ -164,13 +158,13 @@ const Supplies: React.FC = () => {
             <CreationModal
                 show={displayModal === Modal.CREATE}
                 onClose={closeModal}
-                typeOptions={animalTypes}
+                typeOptions={supplyTypes}
                 unitOfMeasurementOptions={unitOfMeasurementOptions}
             />
             <SupplyModal
                 show={displayModal === Modal.DETAILS}
                 supply={selectedSupply!}
-                typeOptions={animalTypes}
+                typeOptions={supplyTypes}
                 unitOfMeasurementOptions={unitOfMeasurementOptions}
                 onClose={() => selectSupply(null)}
                 closeModal={closeModal}

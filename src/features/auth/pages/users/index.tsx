@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { SelectInput, SearchInput, WaveSpinner, ListPagination } from "@components/index";
+import { FilterSelect, SearchInput, WaveSpinner, ListPagination } from "@components/index";
 import { Button } from "@components/ui/button";
 
 import { useDebounce } from "@hooks/index";
@@ -11,7 +11,6 @@ import type { UserMeResponseSchema } from "../../schemas/output/user";
 import { useProfile } from "../../hooks/profile";
 import InviteButton from "./components/inviteButton";
 import InvitationModal from "./components/modal/invitationModal";
-import { getCurrentRole } from "../../utils/user.utils";
 
 const ROLES_TO_ASIGN = Object.fromEntries(Object.entries(SELECT_ROLE_OPTIONS).filter(([key, _]) => key !== "Todos"));
 
@@ -28,7 +27,7 @@ const Users: React.FC = () => {
     const totalPages = Math.ceil((usersList?.total ?? 0) / (usersList?.per_page ?? 1));
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, search: debouncedSearch });
+        setQueryParams(prev => ({ ...prev, search: debouncedSearch, page: debouncedSearch === prev.search ? prev.page : 1 }));
     }, [debouncedSearch]);
 
     const selectUser = (user: UserMeResponseSchema | null) => {
@@ -39,8 +38,8 @@ const Users: React.FC = () => {
         setShowInviteModal(!showInviteModal);
     };
 
-    const updateRole = (role: string) => {
-        setQueryParams({ ...queryParams, role });
+    const updateRole = (role: string | undefined) => {
+        setQueryParams(prev => ({ ...prev, role: role ?? null, page: 1 }));
     };
 
     const getPreviousPage = () => {
@@ -67,10 +66,10 @@ const Users: React.FC = () => {
             <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-3">
-                    <SelectInput
-                        value={getCurrentRole(queryParams.role, SELECT_ROLE_OPTIONS)}
-                        onValueChange={updateRole}
+                    <FilterSelect
+                        value={queryParams.role}
                         options={SELECT_ROLE_OPTIONS}
+                        onValueChange={updateRole}
                     />
                     <SearchInput
                         value={searchTerm ?? ""}

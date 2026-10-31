@@ -6,6 +6,7 @@ export { WaveSpinner, RippleSpinner };
 export { default as ProtectedRoute } from "./ProtectedRoute.component";
 export { default as GuestedRoute } from "./GuestedRoute.component";
 export { default as SwitchWithLabel } from "./SwitchWithLabel.component";
+export { default as FilterSelect } from "./FilterSelect.component";
 export { default as SearchInput } from "./SearchInput.component";
 export { default as SelectInput } from "./SelectInput.component";
 export { default as ListPagination } from "./Pagination.component";

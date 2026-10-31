@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { SelectInput, SearchInput, WaveSpinner } from "@components/index";
+import { FilterSelect, SearchInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
 import { useAnimal, useAnimalList } from "@cattle/hooks/animal";
 import type { AnimalResponseSchema } from "@cattle/schemas/output/animal";
 import { useAnimalTypeList } from "@cattle/hooks/animalType";
-import type { AnimalTypeResponseSchema } from "@cattle/schemas/output/animalTypes";
 
 import { AnimalModal, CreationModal, ProtocolsModal, AnimalTableRow } from "./components";
 import CreateButton from "./components/createButton";
@@ -22,10 +21,9 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.PROTOCOLS | typeof Modal.CR
 
 const Animals: React.FC = () => {
     const { user } = useProfile()
-    const { animalList, setQueryParams, isError, isLoading } = useAnimalList();
+    const { animalList, queryParams, setQueryParams, isError, isLoading } = useAnimalList();
     const { delete: deleteAnimal, isDeleting } = useAnimal();
     const { animalTypeList, isPending: typesIsLoading } = useAnimalTypeList()
-    const [selectedType, setSelectedType] = useState<AnimalTypeResponseSchema | undefined>(undefined)
     const [caravanaSearched, setCaravanaSearched] = useState<string | undefined>(undefined)
     const [breedSearched, setBreedSearched] = useState<string | undefined>(undefined)
     const [animalTypes, setAnimalTypes] = useState<Record<string, string>>({})
@@ -45,11 +43,19 @@ const Animals: React.FC = () => {
     }, [animalTypeList])
 
     useEffect(() => {
-        setQueryParams(prev => ({...prev, caravana: caravanaSearchDebounce}))
+        setQueryParams(prev => ({
+            ...prev,
+            caravana: caravanaSearchDebounce,
+            offset: prev.caravana === (caravanaSearchDebounce ?? null) ? prev.offset : 0,
+        }))
     }, [caravanaSearchDebounce])
 
     useEffect(() => {
-        setQueryParams(prev => ({...prev, breed: breedSearchDebounce}))
+        setQueryParams(prev => ({
+            ...prev,
+            breed: breedSearchDebounce,
+            offset: prev.breed === (breedSearchDebounce ?? null) ? prev.offset : 0,
+        }))
     }, [breedSearchDebounce])
 
 
@@ -60,15 +66,6 @@ const Animals: React.FC = () => {
     const closeModal = () => {
         setDisplayModal(null)
     };
-
-    const updateType = (value: string | undefined) => {
-        if (value === "Todos") {
-            value = ""
-        }
-        setSelectedType(animalTypeList?.find(t => t.id === value))
-        setQueryParams(prev => ({...prev, type_id: value}))
-    }
-
 
     // const getPreviousPage = () => {
     //     if (queryParams.page > 1) {
@@ -94,10 +91,10 @@ const Animals: React.FC = () => {
             <div className="w-full rounded-xl border border-border bg-card p-4 sm:p-6">
                 {/* Filtros */}
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
-                    <SelectInput
-                        value={selectedType?.name ?? "Todos"}
-                        onValueChange={updateType}
-                        options={{ Todos: "", ...animalTypes }}
+                    <FilterSelect
+                        value={queryParams.type_id}
+                        options={animalTypes}
+                        onValueChange={(type_id) => setQueryParams(prev => ({ ...prev, type_id: type_id ?? null, offset: 0 }))}
                     />
                     <SearchInput
                         value={caravanaSearched ?? ""}
