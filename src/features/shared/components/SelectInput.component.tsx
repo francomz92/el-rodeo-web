@@ -18,11 +18,21 @@ const resolveOptionValue = (value: string, options: Record<string, string>): str
 
 const SelectInput: React.FC<SelectInputProps> = ({ value, onValueChange, options }) => {
     const selectedValue = resolveOptionValue(value, options);
+    const labelByValue = Object.fromEntries(
+        Object.entries(options).map(([label, optionValue]) => [optionValue, label]),
+    );
 
     return (
         <Select.Root value={selectedValue} onValueChange={(v) => onValueChange(v ?? "")}>
             <Select.Trigger className="flex h-11 w-full items-center justify-between rounded-lg border border-input bg-background px-3 text-sm text-foreground shadow-none outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 data-popup-open:border-ring data-popup-open:bg-accent hover:cursor-pointer">
-                <Select.Value placeholder={value || "--"} />
+                {/* Base UI renders the raw value in the trigger unless a children
+                    formatter resolves it: map the selected option value back to
+                    its label, falling back to the raw value for unknown input. */}
+                <Select.Value>
+                    {(selected: string | null) =>
+                        selected ? labelByValue[selected] ?? selected : value || "--"
+                    }
+                </Select.Value>
                 <Select.Icon className="text-muted-foreground">
                     <ChevronDown className="size-4" />
                 </Select.Icon>
