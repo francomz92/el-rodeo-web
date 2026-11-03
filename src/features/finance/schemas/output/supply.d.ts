@@ -11,3 +11,15 @@ export type SupplyResponseSchema = {
     user_id: string | null
     type: SupplyTypeResponseSchema
 }
+
+export type SupplyListResponseSchema = {
+    items: SupplyResponseSchema[]
+    total: number
+}
+
+/** Light projection of GET /finance/params/animal-supply (unpaginated reference list). */
+export type SupplyParamsResponseSchema = {
+    id: string
+    name: string
+    unit_of_measurement: string
+}

@@ -15,8 +15,8 @@ export type AnimalResponseSchema = {
 
 export type AnimalListResponseSchema = {
     items: AnimalResponseSchema[]
-    cursor: string
-    next_cursor: string
+    cursor: string | null
+    next_cursor: string | null
     total: number
     has_next: boolean
 }

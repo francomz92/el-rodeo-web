@@ -14,3 +14,11 @@ export type PurchaseResponseSchema = {
   confirmed_at: string | null,
   confirmed_by: string | null,
 };
+
+export type PurchaseListResponseSchema = {
+  items: PurchaseResponseSchema[],
+  cursor: string | null,
+  next_cursor: string | null,
+  total: number,
+  has_next: boolean,
+};

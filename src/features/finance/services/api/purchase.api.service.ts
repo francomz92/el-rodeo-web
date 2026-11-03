@@ -3,7 +3,7 @@ import type { IHttpClient } from "@shared/interfaces/http/clients";
 
 import { PURCHASE_ENDPOINTS } from "../../constants";
 import type { PurchaseCreationType, PurchaseListQueryParams } from "@finance/schemas/input/purchase.schemas";
-import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
+import type { PurchaseListResponseSchema, PurchaseResponseSchema } from "@finance/schemas/output/purchase";
 
 class PurchaseAPI {
     private httpClient: IHttpClient
@@ -12,7 +12,7 @@ class PurchaseAPI {
         this.httpClient = httpClient
     }
 
-    getList(queryParams: PurchaseListQueryParams): Promise<PurchaseResponseSchema[]> {
+    getList(queryParams: PurchaseListQueryParams): Promise<PurchaseListResponseSchema> {
         const params = Object.fromEntries(
             Object.entries(queryParams).filter(([_, value]) => value)
         )

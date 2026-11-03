@@ -3,7 +3,7 @@ import { formatString } from "../../../shared/utils/strings.utils"
 
 import { ANIMAL_TYPE_ENDPOINTS } from "../../constants"
 import type { AnimalTypeCreationType, AnimalTypeListQueryParams, AnimalTypeUpdateType } from "../../schemas/input/animalType.schemas"
-import type { AnimalTypeResponseSchema } from "../../schemas/output/animalTypes"
+import type { AnimalTypeParamsResponseSchema, AnimalTypeResponseSchema } from "../../schemas/output/animalTypes"
 
 
 
@@ -19,6 +19,11 @@ class AnimalTypeAPI {
             Object.entries(queryParams).filter(([_, value]) => value)
         )
         return this.httpClient.get(ANIMAL_TYPE_ENDPOINTS.getTypeList, params)
+    }
+
+    /** Unpaginated reference list for dropdowns (S4/S5). */
+    getParams(): Promise<AnimalTypeParamsResponseSchema[]> {
+        return this.httpClient.get(ANIMAL_TYPE_ENDPOINTS.getParams, {})
     }
 
     create(data: AnimalTypeCreationType): Promise<AnimalTypeResponseSchema> {
