@@ -7,7 +7,7 @@ import { useProfile } from "@auth/hooks/profile";
 import { PurchaseModal, PurchaseTableRow, CreationModal, ConfirmPurchaseDialog, DeletePurchaseDialog } from "./components";
 import CreateButton from "./components/createButton";
 import { usePurchase, usePurchaseList } from "@finance/hooks/purchases";
-import { useSupplyList } from "@finance/hooks/supply";
+import { useSupplyParams } from "@finance/hooks/supply";
 import type { PurchaseListQueryParams } from "@finance/schemas/input/purchase.schemas";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
 import { PURCHASE_STATUS_OPTIONS, UNIT_OF_MEASUREMENT } from "@finance/constants";
@@ -22,7 +22,7 @@ const Purchases: React.FC = () => {
     const { user } = useProfile()
     const { purchaseList, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
     const { delete: deletePurchase, isDeleting, confirm: confirmPurchase, isConfirming } = usePurchase();
-    const { supplyList, isPending: suppliesIsPending } = useSupplyList();
+    const { supplyParams, isPending: suppliesIsPending } = useSupplyParams();
     const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
     const [supplyUnits, setSupplyUnits] = useState<Record<string, string>>({})
     const [selectedPurchase, setSelectedPurchase] = useState<PurchaseResponseSchema | null>(null);
@@ -36,14 +36,14 @@ const Purchases: React.FC = () => {
     })
 
     useEffect(() => {
-        if (supplyList?.length) {
+        if (supplyParams?.length) {
             let options: Record<string, string> = {}
             let units: Record<string, string> = {}
-            supplyList.forEach(s => { options[s.name] = s.id; units[s.id] = s.unit_of_measurement })
+            supplyParams.forEach(s => { options[s.name] = s.id; units[s.id] = s.unit_of_measurement })
             setSupplyOptions({...options})
             setSupplyUnits({...units})
         }
-    }, [supplyList])
+    }, [supplyParams])
 
     const selectPurchase = (purchase: PurchaseResponseSchema | null) => {
         setSelectedPurchase(purchase)

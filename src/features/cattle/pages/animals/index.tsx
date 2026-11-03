@@ -6,7 +6,7 @@ import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
 import { useAnimal, useAnimalList } from "@cattle/hooks/animal";
 import type { AnimalResponseSchema } from "@cattle/schemas/output/animal";
-import { useAnimalTypeList } from "@cattle/hooks/animalType";
+import { useAnimalTypeParams } from "@cattle/hooks/animalType";
 
 import { AnimalModal, CreationModal, ProtocolsModal, AnimalTableRow } from "./components";
 import CreateButton from "./components/createButton";
@@ -23,7 +23,7 @@ const Animals: React.FC = () => {
     const { user } = useProfile()
     const { animalList, queryParams, setQueryParams, isError, isLoading } = useAnimalList();
     const { delete: deleteAnimal, isDeleting } = useAnimal();
-    const { animalTypeList, isPending: typesIsLoading } = useAnimalTypeList()
+    const { animalTypeParams, isPending: typesIsLoading } = useAnimalTypeParams()
     const [caravanaSearched, setCaravanaSearched] = useState<string | undefined>(undefined)
     const [breedSearched, setBreedSearched] = useState<string | undefined>(undefined)
     const [animalTypes, setAnimalTypes] = useState<Record<string, string>>({})
@@ -35,12 +35,12 @@ const Animals: React.FC = () => {
     const breedSearchDebounce = useDebounce(breedSearched, 300)
 
     useEffect(() => {
-        if (animalTypeList?.length) {
+        if (animalTypeParams?.length) {
             let types: Record<string, string> = {}
-            animalTypeList.forEach(t => { types[t.name] = t.id })
+            animalTypeParams.forEach(t => { types[t.name] = t.id })
             setAnimalTypes({...types})
         }
-    }, [animalTypeList])
+    }, [animalTypeParams])
 
     useEffect(() => {
         setQueryParams(prev => ({

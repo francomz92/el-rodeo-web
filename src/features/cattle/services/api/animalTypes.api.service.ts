@@ -1,8 +1,8 @@
-import { IHttpClient } from "../../../shared/interfaces/http/clients"
+import type { IHttpClient } from "../../../shared/interfaces/http/clients"
 import { formatString } from "../../../shared/utils/strings.utils"
 
 import { ANIMAL_TYPE_ENDPOINTS } from "../../constants"
-import type { AnimalTypeCreationType, AnimalTypeListQueryParams, AnimalTypeUpdateType } from "../../schemas/input/animalType.schemas"
+import type { AnimalTypeCreationType, AnimalTypeUpdateType } from "../../schemas/input/animalType.schemas"
 import type { AnimalTypeParamsResponseSchema, AnimalTypeResponseSchema } from "../../schemas/output/animalTypes"
 
 
@@ -12,13 +12,6 @@ class AnimalTypeAPI {
 
     constructor(httpClient: IHttpClient) {
         this.httpClient = httpClient
-    }
-
-    getList(queryParams: AnimalTypeListQueryParams): Promise<AnimalTypeResponseSchema[]> {
-        const params = Object.fromEntries(
-            Object.entries(queryParams).filter(([_, value]) => value)
-        )
-        return this.httpClient.get(ANIMAL_TYPE_ENDPOINTS.getTypeList, params)
     }
 
     /** Unpaginated reference list for dropdowns (S4/S5). */

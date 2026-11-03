@@ -9,7 +9,7 @@ import { SupplyModal, CreationModal, SupplyTableRow } from "./components";
 import CreateButton from "./components/createButton";
 import { useSupply, useSupplyList } from "@finance/hooks/supply";
 import type { SupplyResponseSchema } from "@finance/schemas/output/supply";
-import useSupplyTypeList from "@finance/hooks/supplyType/supplyTypeList.hook";
+import { useSupplyTypeParams } from "@finance/hooks/supplyType";
 import { UNIT_OF_MEASUREMENT } from "@finance/constants";
 
 const Modal = {
@@ -22,7 +22,7 @@ const Supplies: React.FC = () => {
     const { user } = useProfile()
     const { supplyList, queryParams, setQueryParams, isError, isPending } = useSupplyList();
     const { delete: deleteSupply, isDeleting } = useSupply();
-    const { supplyTypeList, isPending: typesIsPending } = useSupplyTypeList()
+    const { supplyTypeParams, isPending: typesIsPending } = useSupplyTypeParams()
     const [nameSearched, setNameSearched] = useState<string | undefined>(undefined)
     const [supplyTypes, setSupplyTypes] = useState<Record<string, string>>({})
     // Modales statues
@@ -37,12 +37,12 @@ const Supplies: React.FC = () => {
     })
 
     useEffect(() => {
-        if (supplyTypeList?.length) {
+        if (supplyTypeParams?.length) {
             let types: Record<string, string> = {}
-            supplyTypeList.forEach(t => { types[t.name] = t.id })
+            supplyTypeParams.forEach(t => { types[t.name] = t.id })
             setSupplyTypes({...types})
         }
-    }, [supplyTypeList])
+    }, [supplyTypeParams])
 
     useEffect(() => {
         setQueryParams(prev => ({

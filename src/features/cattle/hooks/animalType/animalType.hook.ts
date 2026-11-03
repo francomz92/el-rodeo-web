@@ -13,14 +13,14 @@ const useAnimalType = () => {
     const createAnimalTypeMutation = useMutation({
         mutationFn: (data: AnimalTypeCreationType) => animalTypeAPI.create(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: animalTypeQueryKeys.lists() })
+            queryClient.invalidateQueries({ queryKey: animalTypeQueryKeys.params() })
         },
     })
 
     const updateAnimalTypeMutation = useMutation({
         mutationFn: (data: AnimalTypeUpdateType) => animalTypeAPI.update(animalTypeId!, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: animalTypeQueryKeys.lists() })
+            queryClient.invalidateQueries({ queryKey: animalTypeQueryKeys.params() })
         },
     })
 
