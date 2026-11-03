@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { FilterSelect, WaveSpinner } from "@components/index";
+import { CursorPagination, FilterSelect, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useProfile } from "@auth/hooks/profile";
 
@@ -20,7 +20,7 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 
 const Purchases: React.FC = () => {
     const { user } = useProfile()
-    const { purchaseList, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
+    const { purchaseList, purchasePage, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
     const { delete: deletePurchase, isDeleting, confirm: confirmPurchase, isConfirming } = usePurchase();
     const { supplyParams, isPending: suppliesIsPending } = useSupplyParams();
     const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
@@ -34,6 +34,14 @@ const Purchases: React.FC = () => {
     Object.values(UNIT_OF_MEASUREMENT).forEach(unit => {
         unitOfMeasurementOptions[unit] = unit
     })
+    // Filters the visited cursors belong to; changing any of them clears the
+    // cursor state (S1) — the pager drops its stack and the handlers below
+    // reset cursor/offset to the first page.
+    const purchaseFilterSignature = JSON.stringify([
+        queryParams.supply_id,
+        queryParams.unit_of_measurement,
+        queryParams.status,
+    ])
 
     useEffect(() => {
         if (supplyParams?.length) {
@@ -62,17 +70,17 @@ const Purchases: React.FC = () => {
                     <FilterSelect
                         value={queryParams.supply_id}
                         options={supplyOptions}
-                        onValueChange={(supply_id) => setQueryParams(prev => ({ ...prev, supply_id: supply_id ?? null, offset: 0 }))}
+                        onValueChange={(supply_id) => setQueryParams(prev => ({ ...prev, supply_id: supply_id ?? null, offset: 0, cursor: null }))}
                     />
                     <FilterSelect
                         value={queryParams.unit_of_measurement}
                         options={unitOfMeasurementOptions}
-                        onValueChange={(unit_of_measurement) => setQueryParams(prev => ({ ...prev, unit_of_measurement: unit_of_measurement ?? null, offset: 0 }))}
+                        onValueChange={(unit_of_measurement) => setQueryParams(prev => ({ ...prev, unit_of_measurement: unit_of_measurement ?? null, offset: 0, cursor: null }))}
                     />
                     <FilterSelect
                         value={queryParams.status}
                         options={PURCHASE_STATUS_OPTIONS}
-                        onValueChange={(status) => setQueryParams(prev => ({ ...prev, status: (status ?? null) as PurchaseListQueryParams["status"], offset: 0 }))}
+                        onValueChange={(status) => setQueryParams(prev => ({ ...prev, status: (status ?? null) as PurchaseListQueryParams["status"], offset: 0, cursor: null }))}
                     />
                     <CreateButton
                         userRole={user?.role}
@@ -154,6 +162,15 @@ const Purchases: React.FC = () => {
                         </table>
                     </div>
                 </div>
+                <CursorPagination
+                    filterSignature={purchaseFilterSignature}
+                    cursor={queryParams.cursor}
+                    offset={queryParams.offset}
+                    count={purchaseList?.length ?? 0}
+                    total={purchasePage?.total ?? 0}
+                    nextCursor={purchasePage?.next_cursor ?? null}
+                    onNavigate={({ cursor, offset }) => setQueryParams(prev => ({ ...prev, cursor, offset }))}
+                />
             </div>
             <CreationModal
                 show={displayModal === Modal.CREATE}
