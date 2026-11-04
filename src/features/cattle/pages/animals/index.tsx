@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useIsFetching } from "@tanstack/react-query";
 
 import { CursorPagination, FilterSelect, SearchInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
 import { useAnimal, useAnimalList } from "@cattle/hooks/animal";
+import animalQueryKeys from "@cattle/hooks/animal/queryKeys";
 import type { AnimalResponseSchema } from "@cattle/schemas/output/animal";
 import { useAnimalTypeParams } from "@cattle/hooks/animalType";
 
@@ -22,6 +24,9 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.PROTOCOLS | typeof Modal.CR
 const Animals: React.FC = () => {
     const { user } = useProfile()
     const { animalList, queryParams, setQueryParams, isError, isLoading } = useAnimalList();
+    // Block pager navigation while the listing refetches: placeholderData keeps
+    // the stale envelope's next_cursor actionable against the new filters.
+    const isFetching = useIsFetching({ queryKey: animalQueryKeys.list(queryParams) }) > 0;
     const { delete: deleteAnimal, isDeleting } = useAnimal();
     const { animalTypeParams, isPending: typesIsLoading } = useAnimalTypeParams()
     const [caravanaSearched, setCaravanaSearched] = useState<string | undefined>(undefined)
@@ -190,6 +195,7 @@ const Animals: React.FC = () => {
                     count={animalList?.items?.length ?? 0}
                     total={animalList?.total ?? 0}
                     nextCursor={animalList?.next_cursor ?? null}
+                    isFetching={isFetching}
                     onNavigate={({ cursor, offset }) => setQueryParams(prev => ({ ...prev, cursor, offset }))}
                 />
             </div>

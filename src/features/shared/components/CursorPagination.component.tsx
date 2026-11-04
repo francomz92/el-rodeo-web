@@ -23,6 +23,12 @@ interface CursorPaginationProps {
     total: number;
     /** Continuation token from the envelope; null on the last page. */
     nextCursor: string | null;
+    /**
+     * True while the listing query refetches. With `placeholderData` the stale
+     * envelope keeps an actionable `next_cursor`, so navigation is blocked
+     * until the fresh page arrives (avoids a mixed cursor/filter slice).
+     */
+    isFetching?: boolean;
     onNavigate: (page: { cursor: string | null; offset: number }) => void;
 }
 
@@ -39,6 +45,7 @@ const CursorPagination: React.FC<CursorPaginationProps> = ({
     count,
     total,
     nextCursor,
+    isFetching = false,
     onNavigate,
 }) => {
     const [nav, setNav] = useState<CursorNavState>(() => initialCursorNav(filterSignature));
@@ -48,18 +55,25 @@ const CursorPagination: React.FC<CursorPaginationProps> = ({
     const canNext = nextCursor !== null;
 
     const goPrevious = () => {
+        if (isFetching) return;
         const { nav: previousNav, target } = popCursorEntry(nav, filterSignature);
         setNav(previousNav);
         if (target) onNavigate({ cursor: target.cursor, offset: target.offset });
     };
 
     const goNext = () => {
-        if (!nextCursor) return;
+        if (isFetching || !nextCursor) return;
         setNav(pushCursorEntry(nav, filterSignature, { cursor, offset }));
         onNavigate({ cursor: nextCursor, offset: offset + count });
     };
 
     if (count <= 0) return null;
+
+    // `disabled` is a real Base UI Button prop (→ aria-disabled + data-disabled
+    // + activation blocking) and PaginationLink spreads its rest props onto the
+    // anchor in `render`, so it also reaches the DOM as a literal attribute.
+    // PaginationLink's prop type is anchor-derived and omits it, hence the cast.
+    const navGateProps = { disabled: isFetching } as React.ComponentProps<typeof PaginationPrevious>;
 
     return (
         <div className="flex flex-wrap items-center justify-center gap-4">
@@ -67,10 +81,22 @@ const CursorPagination: React.FC<CursorPaginationProps> = ({
             <Pagination className="w-auto">
                 <PaginationContent>
                     <PaginationItem>
-                        <PaginationPrevious isActive={canPrevious} onClick={goPrevious} />
+                        <PaginationPrevious
+                            isActive={canPrevious}
+                            onClick={goPrevious}
+                            {...navGateProps}
+                            aria-disabled={isFetching || undefined}
+                            className={isFetching ? "pointer-events-none opacity-50" : undefined}
+                        />
                     </PaginationItem>
                     <PaginationItem>
-                        <PaginationNext isActive={canNext} onClick={goNext} />
+                        <PaginationNext
+                            isActive={canNext}
+                            onClick={goNext}
+                            {...navGateProps}
+                            aria-disabled={isFetching || undefined}
+                            className={isFetching ? "pointer-events-none opacity-50" : undefined}
+                        />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>

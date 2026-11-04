@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useIsFetching } from "@tanstack/react-query";
 
 import { CursorPagination, FilterSelect, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
@@ -7,6 +8,7 @@ import { useProfile } from "@auth/hooks/profile";
 import { PurchaseModal, PurchaseTableRow, CreationModal, ConfirmPurchaseDialog, DeletePurchaseDialog } from "./components";
 import CreateButton from "./components/createButton";
 import { usePurchase, usePurchaseList } from "@finance/hooks/purchases";
+import purchaseQueryKeys from "@finance/hooks/purchases/queryKeys";
 import { useSupplyParams } from "@finance/hooks/supply";
 import type { PurchaseListQueryParams } from "@finance/schemas/input/purchase.schemas";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
@@ -21,6 +23,9 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 const Purchases: React.FC = () => {
     const { user } = useProfile()
     const { purchaseList, purchasePage, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
+    // Block pager navigation while the listing refetches: placeholderData keeps
+    // the stale envelope's next_cursor actionable against the new filters.
+    const isFetching = useIsFetching({ queryKey: purchaseQueryKeys.list(queryParams) }) > 0;
     const { delete: deletePurchase, isDeleting, confirm: confirmPurchase, isConfirming } = usePurchase();
     const { supplyParams, isPending: suppliesIsPending } = useSupplyParams();
     const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
@@ -169,6 +174,7 @@ const Purchases: React.FC = () => {
                     count={purchaseList?.length ?? 0}
                     total={purchasePage?.total ?? 0}
                     nextCursor={purchasePage?.next_cursor ?? null}
+                    isFetching={isFetching}
                     onNavigate={({ cursor, offset }) => setQueryParams(prev => ({ ...prev, cursor, offset }))}
                 />
             </div>

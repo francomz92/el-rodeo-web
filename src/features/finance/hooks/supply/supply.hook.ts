@@ -27,6 +27,7 @@ const useSupply = (supplyId?: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.lists() })
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.detail(supplyId) })
+            queryClient.invalidateQueries({ queryKey: supplyQueryKeys.params() })
         },
     })
 
@@ -34,6 +35,7 @@ const useSupply = (supplyId?: string) => {
         mutationFn: (data: SupplyCreationType) => supplyAPI.create(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.lists() })
+            queryClient.invalidateQueries({ queryKey: supplyQueryKeys.params() })
         },
         onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
@@ -44,6 +46,7 @@ const useSupply = (supplyId?: string) => {
             toast.success("Eliminado correctamente.!")
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.lists() })
             queryClient.invalidateQueries({ queryKey: supplyQueryKeys.detail(supplyId) })
+            queryClient.invalidateQueries({ queryKey: supplyQueryKeys.params() })
         },
         onError: (error: ErrorResponseType) => notifyApiError(toast, error)
     })
