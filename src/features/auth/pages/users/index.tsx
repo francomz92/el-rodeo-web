@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { FilterSelect, SearchInput, WaveSpinner, ListPagination } from "@components/index";
+import { FilterSelect, SearchInput, WaveSpinner, ListPagination, RecordsCounter } from "@components/index";
 import { Button } from "@components/ui/button";
 
 import { useDebounce } from "@hooks/index";
@@ -152,16 +152,23 @@ const Users: React.FC = () => {
                         </table>
                     </div>
                 </div>
-                <ListPagination
-                    show={usersList?.items?.length !== 0}
-                    totalPages={totalPages}
-                    currentPage={queryParams.page}
-                    key={queryParams.page}
-                    onNext={getNextPage}
-                    onPrevious={getPreviousPage}
-                    toPage={goToPage}
-                    hideDisabledButtons
-                />
+                <div className="flex items-center justify-center gap-4">
+                    <RecordsCounter
+                        offset={((usersList?.page ?? 1) - 1) * (usersList?.per_page ?? 0)}
+                        count={usersList?.items.length ?? 0}
+                        total={usersList?.total ?? 0}
+                    />
+                    <ListPagination
+                        show={usersList?.items?.length !== 0}
+                        totalPages={totalPages}
+                        currentPage={queryParams.page}
+                        key={queryParams.page}
+                        onNext={getNextPage}
+                        onPrevious={getPreviousPage}
+                        toPage={goToPage}
+                        hideDisabledButtons
+                    />
+                </div>
             </div>
             <UserModal
                 show={Boolean(selectedUser)}

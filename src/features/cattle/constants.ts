@@ -8,6 +8,7 @@ export const ANIMAL_ENDPOINTS = {
 
 export const ANIMAL_TYPE_ENDPOINTS = {
     getTypeList: "/cattle/animal-types",
+    getParams: "/cattle/params/animal-type",
     createType: "/cattle/animal-types",
     updateType: "/cattle/animal-types/{typeId}",
 };

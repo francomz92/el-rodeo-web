@@ -10,7 +10,7 @@ const usePurchaseList = () => {
     const [queryParams, setQueryParams] = useQueryStates(PurchaseListQueryParamsSchema);
 
     const {
-        data: purchaseList,
+        data: purchasePage,
         isPending,
         isError,
     } = useQuery({
@@ -20,7 +20,11 @@ const usePurchaseList = () => {
     })
 
     return {
-        purchaseList,
+        // Bare items key kept for current page bindings; the full
+        // CursorPage envelope rides along for the T7/T8 consumers.
+        purchaseList: purchasePage?.items,
+        purchasePage,
+        total: purchasePage?.total,
         isPending,
         isError,
         queryParams,

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { useIsFetching } from "@tanstack/react-query";
 
-import { FilterSelect, SearchInput, WaveSpinner } from "@components/index";
+import { CursorPagination, FilterSelect, SearchInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
 import { useAnimal, useAnimalList } from "@cattle/hooks/animal";
+import animalQueryKeys from "@cattle/hooks/animal/queryKeys";
 import type { AnimalResponseSchema } from "@cattle/schemas/output/animal";
-import { useAnimalTypeList } from "@cattle/hooks/animalType";
+import { useAnimalTypeParams } from "@cattle/hooks/animalType";
 
 import { AnimalModal, CreationModal, ProtocolsModal, AnimalTableRow } from "./components";
 import CreateButton from "./components/createButton";
@@ -22,8 +24,11 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.PROTOCOLS | typeof Modal.CR
 const Animals: React.FC = () => {
     const { user } = useProfile()
     const { animalList, queryParams, setQueryParams, isError, isLoading } = useAnimalList();
+    // Block pager navigation while the listing refetches: placeholderData keeps
+    // the stale envelope's next_cursor actionable against the new filters.
+    const isFetching = useIsFetching({ queryKey: animalQueryKeys.list(queryParams) }) > 0;
     const { delete: deleteAnimal, isDeleting } = useAnimal();
-    const { animalTypeList, isPending: typesIsLoading } = useAnimalTypeList()
+    const { animalTypeParams, isPending: typesIsLoading } = useAnimalTypeParams()
     const [caravanaSearched, setCaravanaSearched] = useState<string | undefined>(undefined)
     const [breedSearched, setBreedSearched] = useState<string | undefined>(undefined)
     const [animalTypes, setAnimalTypes] = useState<Record<string, string>>({})
@@ -33,29 +38,41 @@ const Animals: React.FC = () => {
 
     const caravanaSearchDebounce = useDebounce(caravanaSearched, 300)
     const breedSearchDebounce = useDebounce(breedSearched, 300)
+    // Filters the visited cursors belong to; changing any of them clears the
+    // cursor state (S1) — the pager drops its stack and the handlers below
+    // reset cursor/offset to the first page.
+    const animalFilterSignature = JSON.stringify([queryParams.type_id, queryParams.caravana, queryParams.breed])
 
     useEffect(() => {
-        if (animalTypeList?.length) {
+        if (animalTypeParams?.length) {
             let types: Record<string, string> = {}
-            animalTypeList.forEach(t => { types[t.name] = t.id })
+            animalTypeParams.forEach(t => { types[t.name] = t.id })
             setAnimalTypes({...types})
         }
-    }, [animalTypeList])
+    }, [animalTypeParams])
 
     useEffect(() => {
-        setQueryParams(prev => ({
-            ...prev,
-            caravana: caravanaSearchDebounce,
-            offset: prev.caravana === (caravanaSearchDebounce ?? null) ? prev.offset : 0,
-        }))
+        setQueryParams(prev => {
+            const changed = prev.caravana !== (caravanaSearchDebounce ?? null);
+            return {
+                ...prev,
+                caravana: caravanaSearchDebounce,
+                offset: changed ? 0 : prev.offset,
+                cursor: changed ? null : prev.cursor,
+            };
+        })
     }, [caravanaSearchDebounce])
 
     useEffect(() => {
-        setQueryParams(prev => ({
-            ...prev,
-            breed: breedSearchDebounce,
-            offset: prev.breed === (breedSearchDebounce ?? null) ? prev.offset : 0,
-        }))
+        setQueryParams(prev => {
+            const changed = prev.breed !== (breedSearchDebounce ?? null);
+            return {
+                ...prev,
+                breed: breedSearchDebounce,
+                offset: changed ? 0 : prev.offset,
+                cursor: changed ? null : prev.cursor,
+            };
+        })
     }, [breedSearchDebounce])
 
 
@@ -67,24 +84,6 @@ const Animals: React.FC = () => {
         setDisplayModal(null)
     };
 
-    // const getPreviousPage = () => {
-    //     if (queryParams.page > 1) {
-    //         setQueryParams({ ...queryParams, page: queryParams.page - 1 });
-    //     }
-    // };
-
-    // const getNextPage = () => {
-    //     if (queryParams.page < totalPages) {
-    //         setQueryParams({ ...queryParams, page: queryParams.page + 1 });
-    //     }
-    // };
-
-    // const goToPage = (page: number) => {
-    //     if (page >= 1 && page <= totalPages) {
-    //         setQueryParams({ ...queryParams, page });
-    //     }
-    // };
-
     return (
         <section>
             {isDeleting && <WaveSpinner />}
@@ -94,7 +93,7 @@ const Animals: React.FC = () => {
                     <FilterSelect
                         value={queryParams.type_id}
                         options={animalTypes}
-                        onValueChange={(type_id) => setQueryParams(prev => ({ ...prev, type_id: type_id ?? null, offset: 0 }))}
+                        onValueChange={(type_id) => setQueryParams(prev => ({ ...prev, type_id: type_id ?? null, offset: 0, cursor: null }))}
                     />
                     <SearchInput
                         value={caravanaSearched ?? ""}
@@ -189,16 +188,16 @@ const Animals: React.FC = () => {
                         </table>
                     </div>
                 </div>
-                {/*<ListPagination
-                    show={animalList?.items?.length !== 0}
-                    totalPages={totalPages}
-                    currentPage={queryParams.page}
-                    key={queryParams.page}
-                    onNext={getNextPage}
-                    onPrevious={getPreviousPage}
-                    toPage={goToPage}
-                    hideDisabledButtons
-                />*/}
+                <CursorPagination
+                    filterSignature={animalFilterSignature}
+                    cursor={queryParams.cursor}
+                    offset={queryParams.offset}
+                    count={animalList?.items?.length ?? 0}
+                    total={animalList?.total ?? 0}
+                    nextCursor={animalList?.next_cursor ?? null}
+                    isFetching={isFetching}
+                    onNavigate={({ cursor, offset }) => setQueryParams(prev => ({ ...prev, cursor, offset }))}
+                />
             </div>
             <CreationModal
                 show={displayModal === Modal.CREATE}

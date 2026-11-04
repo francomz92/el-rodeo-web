@@ -3,7 +3,7 @@ import type { IHttpClient } from "@shared/interfaces/http/clients";
 
 import { SUPPLY_ENDPOINTS } from "../../constants";
 import type { SupplyCreationType, SupplyListQueryParams, SupplyUpdateType } from "@finance/schemas/input/supply.schemas";
-import type { SupplyResponseSchema } from "@finance/schemas/output/supply";
+import type { SupplyListResponseSchema, SupplyParamsResponseSchema, SupplyResponseSchema } from "@finance/schemas/output/supply";
 
 class SupplyAPI {
     private httpClient: IHttpClient
@@ -12,11 +12,16 @@ class SupplyAPI {
         this.httpClient = httpClient
     }
 
-    getList(queryParams: SupplyListQueryParams): Promise<SupplyResponseSchema[]> {
+    getList(queryParams: SupplyListQueryParams): Promise<SupplyListResponseSchema> {
         const params = Object.fromEntries(
             Object.entries(queryParams).filter(([_, value]) => value)
         )
         return this.httpClient.get(SUPPLY_ENDPOINTS.getSupplyList, params)
+    }
+
+    /** Unpaginated reference list for dropdowns (S4/S5). */
+    getParams(): Promise<SupplyParamsResponseSchema[]> {
+        return this.httpClient.get(SUPPLY_ENDPOINTS.getParams, {})
     }
 
     getById(supplyId: string): Promise<SupplyResponseSchema> {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { FilterSelect, SearchInput, WaveSpinner } from "@components/index";
+import { RecordsCounter, FilterSelect, SearchInput, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useDebounce } from "@hooks/index";
 import { useProfile } from "@auth/hooks/profile";
@@ -9,7 +9,7 @@ import { SupplyModal, CreationModal, SupplyTableRow } from "./components";
 import CreateButton from "./components/createButton";
 import { useSupply, useSupplyList } from "@finance/hooks/supply";
 import type { SupplyResponseSchema } from "@finance/schemas/output/supply";
-import useSupplyTypeList from "@finance/hooks/supplyType/supplyTypeList.hook";
+import { useSupplyTypeParams } from "@finance/hooks/supplyType";
 import { UNIT_OF_MEASUREMENT } from "@finance/constants";
 
 const Modal = {
@@ -20,9 +20,9 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 
 const Supplies: React.FC = () => {
     const { user } = useProfile()
-    const { supplyList, queryParams, setQueryParams, isError, isPending } = useSupplyList();
+    const { supplyList, queryParams, setQueryParams, isError, isPending, total } = useSupplyList();
     const { delete: deleteSupply, isDeleting } = useSupply();
-    const { supplyTypeList, isPending: typesIsPending } = useSupplyTypeList()
+    const { supplyTypeParams, isPending: typesIsPending } = useSupplyTypeParams()
     const [nameSearched, setNameSearched] = useState<string | undefined>(undefined)
     const [supplyTypes, setSupplyTypes] = useState<Record<string, string>>({})
     // Modales statues
@@ -37,12 +37,12 @@ const Supplies: React.FC = () => {
     })
 
     useEffect(() => {
-        if (supplyTypeList?.length) {
+        if (supplyTypeParams?.length) {
             let types: Record<string, string> = {}
-            supplyTypeList.forEach(t => { types[t.name] = t.id })
+            supplyTypeParams.forEach(t => { types[t.name] = t.id })
             setSupplyTypes({...types})
         }
-    }, [supplyTypeList])
+    }, [supplyTypeParams])
 
     useEffect(() => {
         setQueryParams(prev => ({
@@ -154,6 +154,12 @@ const Supplies: React.FC = () => {
                         </table>
                     </div>
                 </div>
+                <RecordsCounter
+                    offset={queryParams.offset}
+                    count={supplyList?.length ?? 0}
+                    total={total ?? 0}
+                    className="text-center"
+                />
             </div>
             <CreationModal
                 show={displayModal === Modal.CREATE}

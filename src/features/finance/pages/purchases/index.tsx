@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { useIsFetching } from "@tanstack/react-query";
 
-import { FilterSelect, WaveSpinner } from "@components/index";
+import { CursorPagination, FilterSelect, WaveSpinner } from "@components/index";
 import { Button } from "@components/ui/button";
 import { useProfile } from "@auth/hooks/profile";
 
 import { PurchaseModal, PurchaseTableRow, CreationModal, ConfirmPurchaseDialog, DeletePurchaseDialog } from "./components";
 import CreateButton from "./components/createButton";
 import { usePurchase, usePurchaseList } from "@finance/hooks/purchases";
-import { useSupplyList } from "@finance/hooks/supply";
+import purchaseQueryKeys from "@finance/hooks/purchases/queryKeys";
+import { useSupplyParams } from "@finance/hooks/supply";
 import type { PurchaseListQueryParams } from "@finance/schemas/input/purchase.schemas";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
 import { PURCHASE_STATUS_OPTIONS, UNIT_OF_MEASUREMENT } from "@finance/constants";
@@ -20,9 +22,12 @@ type ModalType = typeof Modal.DETAILS | typeof Modal.CREATE
 
 const Purchases: React.FC = () => {
     const { user } = useProfile()
-    const { purchaseList, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
+    const { purchaseList, purchasePage, queryParams, setQueryParams, isError, isPending } = usePurchaseList();
+    // Block pager navigation while the listing refetches: placeholderData keeps
+    // the stale envelope's next_cursor actionable against the new filters.
+    const isFetching = useIsFetching({ queryKey: purchaseQueryKeys.list(queryParams) }) > 0;
     const { delete: deletePurchase, isDeleting, confirm: confirmPurchase, isConfirming } = usePurchase();
-    const { supplyList, isPending: suppliesIsPending } = useSupplyList();
+    const { supplyParams, isPending: suppliesIsPending } = useSupplyParams();
     const [supplyOptions, setSupplyOptions] = useState<Record<string, string>>({})
     const [supplyUnits, setSupplyUnits] = useState<Record<string, string>>({})
     const [selectedPurchase, setSelectedPurchase] = useState<PurchaseResponseSchema | null>(null);
@@ -34,16 +39,24 @@ const Purchases: React.FC = () => {
     Object.values(UNIT_OF_MEASUREMENT).forEach(unit => {
         unitOfMeasurementOptions[unit] = unit
     })
+    // Filters the visited cursors belong to; changing any of them clears the
+    // cursor state (S1) — the pager drops its stack and the handlers below
+    // reset cursor/offset to the first page.
+    const purchaseFilterSignature = JSON.stringify([
+        queryParams.supply_id,
+        queryParams.unit_of_measurement,
+        queryParams.status,
+    ])
 
     useEffect(() => {
-        if (supplyList?.length) {
+        if (supplyParams?.length) {
             let options: Record<string, string> = {}
             let units: Record<string, string> = {}
-            supplyList.forEach(s => { options[s.name] = s.id; units[s.id] = s.unit_of_measurement })
+            supplyParams.forEach(s => { options[s.name] = s.id; units[s.id] = s.unit_of_measurement })
             setSupplyOptions({...options})
             setSupplyUnits({...units})
         }
-    }, [supplyList])
+    }, [supplyParams])
 
     const selectPurchase = (purchase: PurchaseResponseSchema | null) => {
         setSelectedPurchase(purchase)
@@ -62,17 +75,17 @@ const Purchases: React.FC = () => {
                     <FilterSelect
                         value={queryParams.supply_id}
                         options={supplyOptions}
-                        onValueChange={(supply_id) => setQueryParams(prev => ({ ...prev, supply_id: supply_id ?? null, offset: 0 }))}
+                        onValueChange={(supply_id) => setQueryParams(prev => ({ ...prev, supply_id: supply_id ?? null, offset: 0, cursor: null }))}
                     />
                     <FilterSelect
                         value={queryParams.unit_of_measurement}
                         options={unitOfMeasurementOptions}
-                        onValueChange={(unit_of_measurement) => setQueryParams(prev => ({ ...prev, unit_of_measurement: unit_of_measurement ?? null, offset: 0 }))}
+                        onValueChange={(unit_of_measurement) => setQueryParams(prev => ({ ...prev, unit_of_measurement: unit_of_measurement ?? null, offset: 0, cursor: null }))}
                     />
                     <FilterSelect
                         value={queryParams.status}
                         options={PURCHASE_STATUS_OPTIONS}
-                        onValueChange={(status) => setQueryParams(prev => ({ ...prev, status: (status ?? null) as PurchaseListQueryParams["status"], offset: 0 }))}
+                        onValueChange={(status) => setQueryParams(prev => ({ ...prev, status: (status ?? null) as PurchaseListQueryParams["status"], offset: 0, cursor: null }))}
                     />
                     <CreateButton
                         userRole={user?.role}
@@ -154,6 +167,16 @@ const Purchases: React.FC = () => {
                         </table>
                     </div>
                 </div>
+                <CursorPagination
+                    filterSignature={purchaseFilterSignature}
+                    cursor={queryParams.cursor}
+                    offset={queryParams.offset}
+                    count={purchaseList?.length ?? 0}
+                    total={purchasePage?.total ?? 0}
+                    nextCursor={purchasePage?.next_cursor ?? null}
+                    isFetching={isFetching}
+                    onNavigate={({ cursor, offset }) => setQueryParams(prev => ({ ...prev, cursor, offset }))}
+                />
             </div>
             <CreationModal
                 show={displayModal === Modal.CREATE}
