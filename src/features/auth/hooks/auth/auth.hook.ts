@@ -29,6 +29,7 @@ const useAuth = () => {
             queryClient.removeQueries();
             navigate("/login", { state: { from: location }, replace: true });
         },
+        onError: (error: ErrorResponseType) => notifyApiError(toast, error),
     });
 
     const inviteMutation = useMutation({
