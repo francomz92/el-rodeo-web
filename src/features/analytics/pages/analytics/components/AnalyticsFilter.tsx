@@ -4,6 +4,7 @@ import DateTimePicker from "@components/DateTimePicker.component";
 import { Button } from "@components/ui/button";
 import { Label } from "@components/ui/label";
 import { AnalyticsRangeValidationSchema } from "@analytics/schemas/input/analytics.schemas";
+import { localTodayMidnight, parseYmdToLocalDate, toYmdString } from "@shared/utils/dates.utils";
 
 type AnalyticsFilterValues = {
     from_date: string | null;
@@ -15,28 +16,8 @@ type AnalyticsFilterProps = {
     setQueryParams: (values: AnalyticsFilterValues) => void;
 };
 
-// nuqs stays YYYY-MM-DD strings (single source of truth). Convert string->Date
-// only when feeding the picker (local midnight, never new Date("YYYY-MM-DD")
-// which parses as UTC and shifts the day in UTC-3), and Date->string only on
-// onChange via local getters.
-const parseYmdToLocalDate = (value: string): Date | undefined => {
-    if (!value) return undefined;
-    const [year, month, day] = value.split("-").map(Number);
-    if (!year || !month || !day) return undefined;
-    return new Date(year, month - 1, day);
-};
-
-const formatLocalDateToYmd = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
-
-const todayLocalMidnight = (): Date => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-};
+// Filter values stay YYYY-MM-DD strings (single source of truth); parsing and
+// formatting live in @shared/utils/dates.utils.
 
 const AnalyticsFilter: React.FC<AnalyticsFilterProps> = ({ queryParams, setQueryParams }) => {
     const [fromDate, setFromDate] = useState(queryParams.from_date ?? "");
@@ -63,9 +44,9 @@ const AnalyticsFilter: React.FC<AnalyticsFilterProps> = ({ queryParams, setQuery
             <div className="grid gap-1.5 border border-border rounded-xl p-4 bg-card">
                 <Label>Fecha de inicio</Label>
                 <DateTimePicker
-                    value={parseYmdToLocalDate(fromDate) ?? todayLocalMidnight()}
+                    value={parseYmdToLocalDate(fromDate) ?? localTodayMidnight()}
                     onChange={(date) => {
-                        if (date) setFromDate(formatLocalDateToYmd(date));
+                        if (date) setFromDate(toYmdString(date));
                     }}
                     placeholder="Desde"
                     disableTime
@@ -75,9 +56,9 @@ const AnalyticsFilter: React.FC<AnalyticsFilterProps> = ({ queryParams, setQuery
             <div className="grid gap-1.5 border border-border rounded-xl p-4 bg-card">
                 <Label>Fecha de fin</Label>
                 <DateTimePicker
-                    value={parseYmdToLocalDate(toDate) ?? todayLocalMidnight()}
+                    value={parseYmdToLocalDate(toDate) ?? localTodayMidnight()}
                     onChange={(date) => {
-                        if (date) setToDate(formatLocalDateToYmd(date));
+                        if (date) setToDate(toYmdString(date));
                     }}
                     placeholder="Hasta"
                     disableTime

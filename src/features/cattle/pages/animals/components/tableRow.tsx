@@ -6,6 +6,7 @@ import { StatusBadge } from "@components/index";
 import type { AnimalResponseSchema } from "@cattle/schemas/output/animal";
 import { getStatus } from "@cattle/utils/animal.utils";
 import { STATUS_STYLES } from "@cattle/constants";
+import { formatDate } from "@shared/utils/dates.utils";
 
 interface AnimalDetailsProps {
     animal: AnimalResponseSchema;
@@ -50,9 +51,9 @@ const TableRow: React.FC<AnimalDetailsProps> = ({ animal, userRole, select, dele
             <td className="px-4 py-3 text-foreground">{animal.tag}</td>
             <td className="px-4 py-3 text-foreground">{animal.type.name}</td>
             <td className="px-4 py-3 text-foreground">{animal.breed}</td>
-            <td className="px-4 py-3 text-foreground">{new Date(animal.date_of_birth).toLocaleDateString()}</td>
+            <td className="px-4 py-3 text-foreground">{formatDate(animal.date_of_birth)}</td>
             <td className="px-4 py-3 text-foreground tabular-nums">{animal.initial_weight} Kg</td>
-            <td className="px-4 py-3 text-foreground">{new Date(animal.initial_weight_date).toLocaleDateString()}</td>
+            <td className="px-4 py-3 text-foreground">{formatDate(animal.initial_weight_date)}</td>
             <td className="px-4 py-3 text-foreground tabular-nums">{animal.last_weight} kg</td>
             <td className="px-4 py-3">
                 <StatusBadge status={getStatus(animal.status)} statusOptions={STATUS_STYLES} />

@@ -4,6 +4,7 @@ import { Button } from "@components/ui/button";
 import useInventorySummary from "@analytics/hooks/inventory/inventorySummary.hook";
 import useSalesSummary from "@analytics/hooks/sales/salesSummary.hook";
 import { resolveGranularity, selectSalesSeries } from "@analytics/utils/granularity";
+import { formatDate, toYmdString } from "@shared/utils/dates.utils";
 
 import AnalyticsFilter from "./components/AnalyticsFilter";
 import InventoryDoughnut from "./components/InventoryDoughnut";
@@ -17,8 +18,6 @@ type PeriodLike = {
     revenue: number;
     sales_count: number;
 };
-
-const toISODate = (date: Date): string => date.toISOString().slice(0, 10);
 
 const AnalyticsPage: React.FC = () => {
     const { inventorySummary, isPending: inventoryIsPending, isError: inventoryIsError } =
@@ -43,7 +42,7 @@ const AnalyticsPage: React.FC = () => {
             const to = new Date();
             const from = new Date();
             from.setMonth(from.getMonth() - 12);
-            setQueryParams({ from_date: toISODate(from), to_date: toISODate(to) });
+            setQueryParams({ from_date: toYmdString(from), to_date: toYmdString(to) });
         }
     }, [queryParams.from_date, queryParams.to_date, setQueryParams]);
 
@@ -51,11 +50,14 @@ const AnalyticsPage: React.FC = () => {
     const granularityLabel = granularity === "weekly" ? "Semanal" : "Mensual";
 
     const series = (selectSalesSeries(salesSummary?.data, granularity) ?? []) as PeriodLike[];
-    const points: SalesTrendPoint[] = series.map((period) => ({
-        label: period.week_start ?? period.month_start ?? "Período sin fecha",
-        revenue: period.revenue,
-        sales_count: period.sales_count,
-    }));
+    const points: SalesTrendPoint[] = series.map((period) => {
+        const rawLabel = period.week_start ?? period.month_start;
+        return {
+            label: rawLabel ? formatDate(rawLabel) : "Período sin fecha",
+            revenue: period.revenue,
+            sales_count: period.sales_count,
+        };
+    });
 
     return (
         <section aria-label="Analíticas" className="flex flex-col gap-6 sm:gap-8">

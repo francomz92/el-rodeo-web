@@ -13,6 +13,8 @@ import {
     DialogTitle,
 } from "@components/ui/dialog"
 
+import { localTodayMidnight, parseYmdToLocalDate, toYmdString } from "@shared/utils/dates.utils"
+
 import { useReportDownload } from "../../../hooks/download"
 import {
     SalesReportFiltersValidationSchema,
@@ -21,28 +23,8 @@ import {
 import type { ReportCatalogEntry } from "../../../reportCatalog"
 import type { ReportFormat } from "../../../schemas/output/reports"
 
-// Same nuqs-style contract as AnalyticsFilter: values stay YYYY-MM-DD
-// strings (single source of truth). String -> Date only when feeding the
-// picker (local midnight, never new Date("YYYY-MM-DD") which parses as UTC
-// and shifts the day in UTC-3), and Date -> string only on change.
-const parseYmdToLocalDate = (value: string): Date | undefined => {
-    if (!value) return undefined;
-    const [year, month, day] = value.split("-").map(Number);
-    if (!year || !month || !day) return undefined;
-    return new Date(year, month - 1, day);
-};
-
-const localTodayMidnight = (): Date => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-};
-
-const formatLocalDateToYmd = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
+// Filter values stay YYYY-MM-DD strings (single source of truth); parsing and
+// formatting live in @shared/utils/dates.utils.
 
 // Sensible default: last 30 days, local midnight.
 const buildInitialFilters = (): SalesReportFiltersType => {
@@ -50,8 +32,8 @@ const buildInitialFilters = (): SalesReportFiltersType => {
     const from = new Date();
     from.setDate(from.getDate() - 30);
     return {
-        from_date: formatLocalDateToYmd(from),
-        to_date: formatLocalDateToYmd(to),
+        from_date: toYmdString(from),
+        to_date: toYmdString(to),
     };
 };
 
@@ -111,7 +93,7 @@ const ReportParamsDialog: React.FC<ReportParamsDialogProps> = ({ entry, onClose 
                         <DateTimePicker
                             value={parseYmdToLocalDate(filters.from_date) ?? localTodayMidnight()}
                             onChange={(date) => {
-                                if (date) setFilters((prev) => ({ ...prev, from_date: formatLocalDateToYmd(date) }));
+                                if (date) setFilters((prev) => ({ ...prev, from_date: toYmdString(date) }));
                             }}
                             placeholder="Desde"
                             disableTime
@@ -126,7 +108,7 @@ const ReportParamsDialog: React.FC<ReportParamsDialogProps> = ({ entry, onClose 
                         <DateTimePicker
                             value={parseYmdToLocalDate(filters.to_date) ?? localTodayMidnight()}
                             onChange={(date) => {
-                                if (date) setFilters((prev) => ({ ...prev, to_date: formatLocalDateToYmd(date) }));
+                                if (date) setFilters((prev) => ({ ...prev, to_date: toYmdString(date) }));
                             }}
                             placeholder="Hasta"
                             disableTime

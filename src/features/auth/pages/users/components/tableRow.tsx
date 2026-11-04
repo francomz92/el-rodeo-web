@@ -3,6 +3,7 @@ import { Eye, Trash2 } from "lucide-react";
 import picture from "@assets/profile-default.svg";
 
 import { StatusBadge } from "@components/index";
+import { formatDate } from "@shared/utils/dates.utils";
 import type { UserMeResponseSchema } from "../../../schemas/output/user";
 import { getCurrentRole, isSameUser } from "../../../utils/user.utils";
 
@@ -39,7 +40,7 @@ const TableRow: React.FC<UserDetailsProps> = ({ authenticatedUser, user, onSelec
                 </div>
             </td>
             <td className="px-4 py-3 text-foreground">{getCurrentRole(user.role, roleOptions)}</td>
-            <td className="px-4 py-3 text-foreground">{new Date(user.created_at).toLocaleDateString()}</td>
+            <td className="px-4 py-3 text-foreground">{formatDate(user.created_at)}</td>
             <td className="px-4 py-3">
                 <StatusBadge status={user.is_active ? "Activo" : "Inactivo"} />
             </td>
