@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { configDefaults, defineConfig } from 'vitest/config'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import babel from '@rolldown/plugin-babel'
@@ -25,5 +25,10 @@ export default defineConfig({
             "@finance": resolve(__dirname, "./src/features/finance"),
             "@reports": resolve(__dirname, "./src/features/reports"),
         }
-    }
+    },
+    test: {
+        // Tooling worktrees under .delta/ duplicate the whole repo (and its
+        // tests); never discover them from the main checkout.
+        exclude: [...configDefaults.exclude, ".delta/**"],
+    },
 })
