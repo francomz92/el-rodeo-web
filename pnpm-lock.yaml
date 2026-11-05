@@ -44,9 +44,6 @@ importers:
       cn:
         specifier: ^0.2.5
         version: 0.2.5
-      date-fns:
-        specifier: ^4.4.0
-        version: 4.4.0
       ky:
         specifier: ^2.0.2
         version: 2.0.2
