@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { cn } from "@utils/cssStyle.lib";
+import { formatDate, formatDateTime, formatTime } from "@shared/utils/dates.utils";
 
 import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -35,20 +36,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {value ? (
                         !disableTime ? (
-                            value.toLocaleString("es-AR", {
-                                hour12: false,
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                            })
+                            formatDateTime(value)
                         ) : (
-                            value.toLocaleString("es-AR", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                            })
+                            formatDate(value)
                         )
                     ) : (
                         <span>{placeholder}</span>
@@ -78,7 +68,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                         <Input
                             type="time"
                             // value={value ? format(value, "HH:mm") : "00:00"}
-                            value={value ? value.toLocaleString("es-AR", { hour12: false, hour: "2-digit", minute: "2-digit" }) : "00:00"}
+                            value={value ? formatTime(value) : "00:00"}
                             onChange={(e) => {
                                 const [hours, minutes] = e.target.value.split(":").map(Number);
                                 const newDate = value ? new Date(value) : new Date();

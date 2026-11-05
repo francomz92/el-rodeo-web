@@ -18,6 +18,7 @@ import { DateTimePicker, WaveSpinner } from "@components/index";
 import { Badge } from "@components/ui/badge";
 import { Button } from "@components/ui/button";
 import { capitalize } from "@shared/utils/strings.utils";
+import { DEFAULT_TIME_ZONE, formatTime, toYmdString } from "@shared/utils/dates.utils";
 import type { ErrorResponseType } from "@shared/schemas/output/responses.schemas";
 import { useUserList } from "@auth/hooks/user";
 import { useAnimalScheduleEventList } from "@cattle/hooks/animalScheduleEvent";
@@ -47,7 +48,7 @@ const Calendar: React.FC = () => {
     useEffect(() => {
         if (!controller.getDate() && !controller.view?.currentStart) return;
         setSelectedDate(controller.getDate()!);
-    }, [controller.view?.currentStart.toLocaleDateString()])
+    }, [controller.view?.currentStart ? toYmdString(controller.view.currentStart) : ""])
 
     const calendarError = error as ErrorResponseType | null;
     const calendarErrorMessage =
@@ -130,7 +131,7 @@ const Calendar: React.FC = () => {
                     }}
                     initialView="timeGridWeek"
                     locale={esLocale}
-                    timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}
+                    timeZone={DEFAULT_TIME_ZONE}
                     todayText="Hoy"
                     listText="Día"
                     height="75vh"
@@ -148,7 +149,7 @@ const Calendar: React.FC = () => {
                     }}
                     dayCellTopClass={(info) => {
                         const toDayStyle =
-                            info.date.toLocaleDateString() === new Date().toLocaleDateString()
+                            toYmdString(info.date) === toYmdString(new Date())
                                 ? " shadow-[inset_0_4px_0_0_var(--chart-1)]!"
                                 : "";
                         return "relative!" + toDayStyle;
@@ -184,8 +185,8 @@ const Calendar: React.FC = () => {
                         return (
                             <div className="flex! flex-col!">
                                 <span className="text-[10px]">
-                                    {info.event.start?.toLocaleString("es-AR", { hourCycle: "h24", timeStyle: "short" })}-
-                                    {info.event.end?.toLocaleString("es-AR", { hourCycle: "h24", timeStyle: "short" })}
+                                    {info.event.start ? formatTime(info.event.start) : "—"}-
+                                    {info.event.end ? formatTime(info.event.end) : "—"}
                                 </span>
                                 <span className="text-sm font-normal">{info.event.title}</span>
                             </div>

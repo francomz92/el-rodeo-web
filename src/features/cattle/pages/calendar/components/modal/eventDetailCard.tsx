@@ -15,6 +15,7 @@ import { COLOR_EVENT_TYPE, EVENT_STATUS_CONFIG } from "../../constants";
 import type { UserMeResponseSchema } from "@auth/schemas/output/user";
 import { useProfile } from "@auth/hooks/profile";
 import { PUBLIC_AUTH_ROLES } from "@auth/constants";
+import { formatDateWith, formatTime } from "@shared/utils/dates.utils";
 
 export interface EventDetailCardProps {
     event: ExtendedEventProps;
@@ -77,14 +78,14 @@ export const EventDetailCard: React.FC<EventDetailCardProps> = ({ event, onClose
                     <div className="flex items-center gap-3 text-sm">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                         <span className="text-foreground">
-                            {eventDate.toLocaleString("es-AR", { weekday: "long", day: "numeric", month: "long" })}
+                            {formatDateWith(eventDate, { weekday: "long", day: "numeric", month: "long" })}
                         </span>
                     </div>
                     <div className="flex items-center gap-3 text-sm">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <span className="text-foreground">
-                            {new Date(event.start).toLocaleString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs –{" "}
-                            {new Date(event.end).toLocaleString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs
+                            {formatTime(event.start)} hs –{" "}
+                            {formatTime(event.end)} hs
                         </span>
                     </div>
                 </div>
