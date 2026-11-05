@@ -4,6 +4,7 @@ import { AUTH_ROLES } from "@auth/constants";
 import { StatusBadge } from "@components/index";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
 import { PURCHASE_STATUS } from "@finance/constants";
+import { formatDate } from "@shared/utils/dates.utils";
 
 interface PurchaseDetailsProps {
     purchase: PurchaseResponseSchema;
@@ -68,7 +69,7 @@ const TableRow: React.FC<PurchaseDetailsProps> = ({
             <td className="px-4 py-3 text-foreground tabular-nums">{purchase.amount} {purchase.unit_of_measurement}</td>
             <td className="px-4 py-3 text-foreground tabular-nums">${purchase.price.toLocaleString("es-AR")}</td>
             <td className="px-4 py-3 text-foreground tabular-nums">${purchase.unit_price.toLocaleString("es-AR")}</td>
-            <td className="px-4 py-3 text-foreground">{purchase.purchase_date}</td>
+            <td className="px-4 py-3 text-foreground">{formatDate(purchase.purchase_date)}</td>
             <td className="px-4 py-3 text-foreground">{purchase.user_name ?? "—"}</td>
             <td className="px-4 py-3">
                 <StatusBadge

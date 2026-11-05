@@ -5,6 +5,7 @@ import { Field, FieldLabel } from "@components/ui/field";
 import { Input } from "@components/ui/input";
 import { FIELD_LABEL_STATE_STYLES, inputStyle } from "@shared/constants/styles";
 import type { PurchaseResponseSchema } from "@finance/schemas/output/purchase";
+import { formatDate } from "@shared/utils/dates.utils";
 
 interface PurchaseModalContentProps {
     purchase: PurchaseResponseSchema;
@@ -60,7 +61,7 @@ const PurchaseModalContent: React.FC<PurchaseModalContentProps> = ({ purchase, o
                                     <FieldLabel htmlFor="purchase_date" className={fieldLabelStyle}>
                                         Fecha de compra
                                     </FieldLabel>
-                                    <Input id="purchase_date" type="text" defaultValue={purchase.purchase_date} className={inputStyle} disabled />
+                                    <Input id="purchase_date" type="text" defaultValue={formatDate(purchase.purchase_date)} className={inputStyle} disabled />
                                 </Field>
                                 <Field className="gap-1.5">
                                     <FieldLabel htmlFor="user_name" className={fieldLabelStyle}>
